@@ -1,0 +1,12 @@
+{% extends "layouts/base.htm.twig" %}
+
+{% block title %}Home{% endblock %}
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h2>{{ message }}</h2>
+{% endblock %}
