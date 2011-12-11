@@ -19,6 +19,7 @@ class Core {
 	
 	private $routes = array();
 	private $requested_route;
+	private $matched_request_route_params;
 	private $request_method;
 	
 	private function __construct()
@@ -53,7 +54,7 @@ class Core {
 		self::$cache_dir = $cache_dir;
 	}
 	
-	function appendRoute()
+	function appendRoute($route)
 	{
 		$match = null;
 		if( ! preg_match('/^(GET|PUT|POST|DELETE) +(.*)$/', $route, $match)
@@ -73,17 +74,14 @@ class Core {
 	
 	function doWork(\Closure $work)
 	{
-		$work = $this->append_to_closure(
-			$work, 
-			"return get_defined_vars()");
-		$last_route = end($this->routes);
-		$last_route->workload($work);
+		$last_route = $this->last_route();
+		$last_route->executable_workload($work);
 		return $this;
 	}
 	
 	function expose($name_to_expose_to_view)
 	{
-		$last_route = end($this->routes);
+		$last_route = $this->last_route();
 		$last_route->exposed_work( 
 			array_fill_keys(array_map('trim', explode(',', $name_to_expose_to_view)),null)
 		);
@@ -92,14 +90,18 @@ class Core {
 	
 	function render($view_name)
 	{
-		$last_route = end($this->routes);
+		$last_route = $this->last_route();
 		$last_route->targeted_view($view_name);
 		return $this;
 	}
 	
 	function renderView(RouteWork $route, $content_template_name=null, $layout_template_name=null)
 	{
-		$work = $route->workload();
+		$work = $this->append_to_closure(
+			$route->executable_workload(), 
+			"return get_defined_vars()",
+			$this->matched_request_route_params
+		);
 		$completed_work = $work();
 		$template_payload = array_intersect_key($completed_work, $route->exposed_work());
 		if(self::TEMPLATE_ENGINE=='twig')
@@ -153,13 +155,24 @@ class Core {
 				&& $disected_request_route['controller'] == $known_route->controller())
 			{
 				$matched_route = $known_route;
+				$this->matched_request_route_params = array_combine(
+					$matched_route->uri_path_segments(), $disected_request_route['uri_path_segments']
+				);
 				break;
 			}
 		}
 		return $matched_route;
 	}
 	
-	
+	/**
+	 * @param string $raw_route ex: "/hello/:name"
+	 * @return array ex: array(
+	 * 		'controller' => "hello",
+	 * 		'uri_path_sements' => array(
+	 * 			0 => ':name'
+	 * 		)
+	 * )
+	 */
 	private function disect_route($raw_route)
 	{
 		$uri_path_segments = explode('/', trim($raw_route, '/'));
@@ -167,9 +180,21 @@ class Core {
 		return array('controller' => $controller, 'uri_path_segments' => $uri_path_segments);
 	}
 	
-	
-	
-	private function append_to_closure(\Closure $closure, $closure_append)
+	/**
+	 * This is where things get a little crazy
+	 * Take the closure supplied in the doWork call
+	 *  - Steal its lines of code
+	 *  - append $closure_append to the closure's lines of code
+	 *    $closure_append = "return get_defined_vars()"
+	 *  - use these lines of code to eval a new closure with
+	 *    use ($param) added.
+	 *  
+	 * @param \Closure $closure
+	 * @param string $closure_append 
+	 * @param array $param
+	 * @return \Closure
+	 */
+	private function append_to_closure(\Closure $closure, $closure_append, $param)
 	{
 		$closure_append = "\n".trim($closure_append,"\n; ").";\n";
 		
@@ -192,8 +217,17 @@ class Core {
 		$code = preg_replace('/(})$/',$closure_append.'$1',$code);
 		
 		$closure = null;
+		$code = str_replace('function()','function() use ($param)',$code);
 		eval('namespace '.__NAMESPACE__.'; $closure = '.$code.';');
 		return $closure;
+	}
+	
+	/**
+	 * @return RouteWork
+	 */
+	private function last_route()
+	{
+		return end($this->routes);
 	}
 	
 	private function replace_constants($code, $path_to_code_file)

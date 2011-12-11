@@ -13,7 +13,7 @@ class RouteWork {
 	private $http_method;
 	private $controller;
 	private $uri_path_segments;
-	private $workload;
+	private $executable_workload;
 	private $targeted_view;
 	/**
 	 * @var public 
@@ -48,9 +48,9 @@ class RouteWork {
 	 * @param null $workload
 	 * @return \Closure
 	 */
-	function workload(\Closure $workload=null)
+	function executable_workload(\Closure $workload=null)
 	{
-		return $workload===null ? $this->workload : $this->workload = $workload;
+		return $workload===null ? $this->executable_workload : $this->executable_workload = $workload;
 	}
 	function targeted_view($targeted_view=null)
 	{
