@@ -34,7 +34,11 @@ class Core {
 		if( ! strstr($class, __NAMESPACE__)) {return false;}
     	require(str_replace(__NAMESPACE__.'/','',$class));
 	}
-	
+	/**
+	 * singleton instance accesor
+	 * 
+	 * @return Core
+	 */
 	static function instance()
 	{
 		static $core;
@@ -155,13 +159,32 @@ class Core {
 				&& $disected_request_route['controller'] == $known_route->controller())
 			{
 				$matched_route = $known_route;
-				$this->matched_request_route_params = array_combine(
-					$matched_route->uri_path_segments(), $disected_request_route['uri_path_segments']
+				$this->match_route_keys_to_request_values(
+					$matched_route->uri_path_segments(),
+					$disected_request_route['uri_path_segments']
 				);
 				break;
 			}
 		}
 		return $matched_route;
+	}
+	/**
+	 * Take the route defined for a URI and for each placeholder (/:name) look
+	 * for a value in the request URI.  The mapping is set to
+	 * $this->matched_request_route_params
+	 * 
+	 * @param array $route_keys
+	 * @param array $request_values
+	 * @return void
+	 */
+	private function match_route_keys_to_request_values(array $route_keys, array $request_values)
+	{
+		foreach($route_keys as $uri_segment_index => $route_key)
+		{
+			$this->matched_request_route_params[$route_key] = isset($request_values[$uri_segment_index])
+				? $request_values[$uri_segment_index]
+				: null;
+		}
 	}
 	
 	/**
