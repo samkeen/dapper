@@ -1,6 +1,6 @@
 <?php
 
-namespace thundercats;
+namespace clear;
 
 class Util
 {

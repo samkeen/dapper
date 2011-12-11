@@ -1,5 +1,5 @@
 <?php
-namespace thundercats;
+namespace clear;
 const TOP_DIR = __DIR__;
 require __DIR__."/lib/bootup.php";
 

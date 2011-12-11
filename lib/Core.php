@@ -1,5 +1,5 @@
 <?php
-namespace thundercats;
+namespace clear;
 
 /**
  * Created by JetBrains PhpStorm.

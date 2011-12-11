@@ -1,5 +1,5 @@
 <?php
-namespace thundercats;
+namespace clear;
 
 require __DIR__ . "/Core.php";
 
