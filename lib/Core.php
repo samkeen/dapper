@@ -14,26 +14,70 @@ class Core {
 	const TEMPLATE_ENGINE = 'twig';
 	const DEFAULT_CONTROLLER = 'home';
 	
-	private static $template_dir;
-	private static $cache_dir;
+	private static $config = array(
+		'template_dir' => null,
+		'cache_dir' => null
+	);
 	
 	private $routes = array();
 	private $requested_route;
 	private $matched_request_route_params;
 	private $request_method;
 	
-	private function __construct()
+	
+	/*
+	 * doWork, expose, and render are considered the 'public api'
+	 * meant for index.php.
+	 * All other methods are meant for use from Core
+	 */
+	
+	/**
+	 * index.php method
+	 * 
+	 * @param \Closure $work
+	 * @return Core
+	 */
+	function doWork(\Closure $work)
 	{
-		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
-		$this->request_method = $_SERVER['REQUEST_METHOD'];
+		$last_route = $this->last_route();
+		$last_route->executable_workload($work);
+		return $this;
 	}
 	
-	static function autoload($class)
+	/**
+	 * index.php method
+	 * 
+	 * @param $name_to_expose_to_view
+	 * @return Core
+	 */
+	function expose($name_to_expose_to_view)
 	{
-		$class = str_replace('\\', '/', $class) . '.php';
-		if( ! strstr($class, __NAMESPACE__)) {return false;}
-    	require(str_replace(__NAMESPACE__.'/','',$class));
+		$last_route = $this->last_route();
+		$last_route->exposed_work( 
+			array_fill_keys(array_map('trim', explode(',', $name_to_expose_to_view)),null)
+		);
+		return $this;
 	}
+	
+	/**
+	 * index.php method
+	 * 
+	 * @param $view_name
+	 * @return Core
+	 */
+	function render($view_name)
+	{
+		$last_route = $this->last_route();
+		$last_route->targeted_view($view_name);
+		return $this;
+	}
+	
+	
+	/*
+	 * All the following methods are not meant to be used in index.php.  They are
+	 * internals meant for Core and bootup.php
+	 */
+	
 	/**
 	 * singleton instance accesor
 	 * 
@@ -49,16 +93,52 @@ class Core {
 		return $core;
 	}
 	
-	public static function templateDir($template_dir)
+	/**
+	 * privatized constructor.
+	 * @see $this->__construct()
+	 */
+	private function __construct()
 	{
-		self::$template_dir = $template_dir;
-	}
-	public static function cacheDir($cache_dir)
-	{
-		self::$cache_dir = $cache_dir;
+		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
+		$this->request_method = $_SERVER['REQUEST_METHOD'];
 	}
 	
-	function appendRoute($route)
+	/**
+	 * autoloader for the entire app
+	 * 
+	 * @param string $class
+	 * @return bool
+	 */
+	static function autoload($class)
+	{
+		$class = str_replace('\\', '/', $class) . '.php';
+		if( ! strstr($class, __NAMESPACE__)) {return false;}
+    	require(str_replace(__NAMESPACE__.'/','',$class));
+	}
+	
+	/**
+	 * Setter for static env config values
+	 * 
+	 * @see self::$config
+	 * @param string $config_key
+	 * @param mixed $config_value
+	 * @return void
+	 */
+	public static function config($config_key, $config_value)
+	{
+		if( ! array_key_exists($config_key, self::$config))
+		{
+			throw new \Exception("Unknown config key [{$config_key}]");
+		}
+		self::$config[$config_key] = $config_value;
+	}
+	
+	/**
+	 * 
+	 * @param string $route 
+	 * @return Core
+	 */
+	function append_route($route)
 	{
 		$match = null;
 		if( ! preg_match('/^(GET|PUT|POST|DELETE) +(.*)$/', $route, $match)
@@ -76,29 +156,6 @@ class Core {
 		return $this;
 	}
 	
-	function doWork(\Closure $work)
-	{
-		$last_route = $this->last_route();
-		$last_route->executable_workload($work);
-		return $this;
-	}
-	
-	function expose($name_to_expose_to_view)
-	{
-		$last_route = $this->last_route();
-		$last_route->exposed_work( 
-			array_fill_keys(array_map('trim', explode(',', $name_to_expose_to_view)),null)
-		);
-		return $this;
-	}
-	
-	function render($view_name)
-	{
-		$last_route = $this->last_route();
-		$last_route->targeted_view($view_name);
-		return $this;
-	}
-	
 	function renderView(RouteWork $route, $content_template_name=null, $layout_template_name=null)
 	{
 		$work = $this->append_to_closure(
@@ -110,9 +167,9 @@ class Core {
 		$template_payload = array_intersect_key($completed_work, $route->exposed_work());
 		if(self::TEMPLATE_ENGINE=='twig')
 		{
-			$loader = new \Twig_Loader_Filesystem(self::$template_dir);
+			$loader = new \Twig_Loader_Filesystem(self::$config['template_dir']);
 			$twig = new \Twig_Environment($loader, array(
-				'cache' 			=> self::$cache_dir.'/twig_cache',
+				'cache' 			=> self::$config['cache_dir'].'/twig_cache',
 				'auto_reload' 		=> true,
 				'debug'				=> true,
 				'strict_variables'	=> true,
@@ -124,11 +181,16 @@ class Core {
 		else if(self::TEMPLATE_ENGINE=='php')
 		{
 			extract($template_payload);
-			include __DIR__ . self::$template_dir."/layouts/{$layout_template_name}.htm.php";
+			include __DIR__ . self::$config['template_dir']."/layouts/{$layout_template_name}.htm.php";
 		}
 	}
-	
-	function doItLive/*!!*/()
+	/**
+	 * For the given request URI look for a matched route defined in 
+	 * index.php.  If found, render it.
+	 * 
+	 * @return void
+	 */
+	function render_route()
 	{
 		if($route = $this->match_route())
 		{
@@ -145,6 +207,10 @@ class Core {
 		
 	}
 	
+	/**
+	 * 
+	 * @return RouteWork
+	 */
 	private function match_route()
 	{
 		$matched_route = null;
