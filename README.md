@@ -108,6 +108,16 @@ upon('GET /')->
 ```
 
 ```php
+upon('GET /')->
+  expose('message')->
+  from(function(){
+    $name = segment(':name');
+	$message = "Hello $name";
+  })->
+  to_view('hello');
+```
+
+```php
 _for('GET /')
   ->expose('message')
   ->from_work(function(){
