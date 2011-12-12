@@ -136,3 +136,12 @@ for_('GET /')
   })
   ->to_view('hello');
 ```
+
+## Examples
+
+simplist
+ |
+ |
+ |
+\./
+complex
