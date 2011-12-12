@@ -1,11 +1,7 @@
 <?php
 namespace clear;
 /**
- * Created by JetBrains PhpStorm.
- * User: sam
- * Date: 12/9/11
- * Time: 7:42 AM
- * To change this template use File | Settings | File Templates.
+ * Abstract the work to be done for the matched request Route
  */
 class RouteWork {
 
@@ -24,7 +20,7 @@ class RouteWork {
 	{
 		$this->route = $route;
 		$this->http_method = $http_method;
-		$this->controller = str_replace(array('.', '/'), '', $controller);
+		$this->controller = $controller;
 		$this->uri_path_segments = $uri_path_segments;
 	}
 	
@@ -45,13 +41,22 @@ class RouteWork {
 		return $uri_path_segments===null ? $this->uri_path_segments : $this->uri_path_segments = $uri_path_segments;
 	}
 	/**
-	 * @param null $workload
+	 * @param \Closure $workload
+	 * Actually returns ExtractingClosure but reciever will not know the difference.
 	 * @return \Closure
 	 */
 	function executable_workload(\Closure $workload=null)
 	{
-		return $workload===null ? $this->executable_workload : $this->executable_workload = $workload;
+		if($workload)
+		{
+			$this->executable_workload = new ExtractingClosure($workload);
+		}
+		else
+		{
+			return $this->executable_workload;
+		}
 	}
+
 	function targeted_view($targeted_view=null)
 	{
 		return $targeted_view===null ? $this->targeted_view : $this->targeted_view = $targeted_view;

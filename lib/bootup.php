@@ -1,15 +1,34 @@
 <?php
 namespace clear;
 
+/**
+ * Initiate the system
+ * Pull in Core and pass key Env values to it.  
+ * Set up auto loader
+ */
 require __DIR__ . "/Core.php";
 
+/*
+ * default template_engine is plain old php ("php"), to use twig, make
+ * this call
+ * Core::config('template_engine', "twig");
+ */
+Core::config('template_engine', "twig");
+/*
+ * twig requires a env config array
+ */
+Core::config('template_env',array(
+	'cache' 			=> TOP_DIR."/cache_write/twig_cache",
+	'auto_reload' 		=> true,
+	'debug'				=> true,
+	'strict_variables'	=> true,
+	'autoescape'		=> true,
+));
 Core::config('template_dir', TOP_DIR."/templates");
 Core::config('cache_dir', TOP_DIR."/cache_write");
 
 spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
 
-require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
-\Twig_Autoloader::register();
 
 /**
  * index.php method
@@ -17,7 +36,7 @@ require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
  * Single global function.  Gets to initial refernce to the
  * Core singleton and then proxies calls of Core::append_route()
  * 
- * @param $route ex: "Get /hello/:name"  
+ * @param string $route ex: "Get /hello/:name"  
  * @return Core
  */
 function with($route)

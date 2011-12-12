@@ -1,0 +1,14 @@
+{% extends "layouts/example.htm.twig" %}
+
+{% block title %}Example{% endblock %}
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h2>Example</h2>
+    <p>The route definition that got you here is:</p>
+    <p>This is the [] template using the [] layout</p>
+{% endblock %}

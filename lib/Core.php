@@ -2,19 +2,17 @@
 namespace clear;
 
 /**
- * Created by JetBrains PhpStorm.
- * User: sam
- * Date: 12/9/11
- * Time: 7:29 AM
- * To change this template use File | Settings | File Templates.
+ * 
+ * 
  */
- 
 class Core {
 	
 	const TEMPLATE_ENGINE = 'twig';
 	const DEFAULT_CONTROLLER = 'home';
 	
 	private static $config = array(
+		'template_engine' => 'php',
+		'template_env' => array(),
 		'template_dir' => null,
 		'cache_dir' => null
 	);
@@ -37,10 +35,9 @@ class Core {
 	 * @param \Closure $work
 	 * @return Core
 	 */
-	function doWork(\Closure $work)
+	function do_work(\Closure $work)
 	{
-		$last_route = $this->last_route();
-		$last_route->executable_workload($work);
+		$this->last_route()->executable_workload($work);
 		return $this;
 	}
 	
@@ -52,8 +49,7 @@ class Core {
 	 */
 	function expose($name_to_expose_to_view)
 	{
-		$last_route = $this->last_route();
-		$last_route->exposed_work( 
+		$this->last_route()->exposed_work( 
 			array_fill_keys(array_map('trim', explode(',', $name_to_expose_to_view)),null)
 		);
 		return $this;
@@ -67,8 +63,7 @@ class Core {
 	 */
 	function render($view_name)
 	{
-		$last_route = $this->last_route();
-		$last_route->targeted_view($view_name);
+		$this->last_route()->targeted_view($view_name);
 		return $this;
 	}
 	
@@ -101,6 +96,11 @@ class Core {
 	{
 		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
 		$this->request_method = $_SERVER['REQUEST_METHOD'];
+		if(self::$config['template_engine']=="twig")
+		{
+			require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
+			\Twig_Autoloader::register();
+		}
 	}
 	
 	/**
@@ -156,33 +156,37 @@ class Core {
 		return $this;
 	}
 	
-	function renderView(RouteWork $route, $content_template_name=null, $layout_template_name=null)
+	function render_view(RouteWork $route)
 	{
-		$work = $this->append_to_closure(
-			$route->executable_workload(), 
-			"return get_defined_vars()",
-			$this->matched_request_route_params
-		);
-		$completed_work = $work();
-		$template_payload = array_intersect_key($completed_work, $route->exposed_work());
+		$template_payload = array();
+		if($route_work = $route->executable_workload())
+		{
+			$template_payload = array_intersect_key(
+				$route_work($this->matched_request_route_params),
+				$route->exposed_work()
+			);
+		}
+		
 		if(self::TEMPLATE_ENGINE=='twig')
 		{
-			$loader = new \Twig_Loader_Filesystem(self::$config['template_dir']);
-			$twig = new \Twig_Environment($loader, array(
-				'cache' 			=> self::$config['cache_dir'].'/twig_cache',
-				'auto_reload' 		=> true,
-				'debug'				=> true,
-				'strict_variables'	=> true,
-				'autoescape'		=> true,
-			));
-			
+			$twig = $this->init_twig();
 			echo $twig->render("content/{$route->targeted_view()}.htm.twig", $template_payload);
 		} 
 		else if(self::TEMPLATE_ENGINE=='php')
 		{
 			extract($template_payload);
-			include __DIR__ . self::$config['template_dir']."/layouts/{$layout_template_name}.htm.php";
+			include __DIR__ . self::$config['template_dir']."/{$route->targeted_view()}.htm.php";
 		}
+	}
+	/**
+	 * @return \Twig_Environment
+	 */
+	private function init_twig()
+	{
+		return new \Twig_Environment(
+			new \Twig_Loader_Filesystem(self::$config['template_dir']),
+			self::$config['template_env']
+		);
 	}
 	/**
 	 * For the given request URI look for a matched route defined in 
@@ -194,7 +198,7 @@ class Core {
 	{
 		if($route = $this->match_route())
 		{
-			$this->renderView($route);
+			$this->render_view($route);
 		}
 		else
 		{
@@ -266,49 +270,8 @@ class Core {
 	{
 		$uri_path_segments = explode('/', trim($raw_route, '/'));
 		$controller = array_shift($uri_path_segments);
+		$controller = $controller==="" ? "/" : $controller;
 		return array('controller' => $controller, 'uri_path_segments' => $uri_path_segments);
-	}
-	
-	/**
-	 * This is where things get a little crazy
-	 * Take the closure supplied in the doWork call
-	 *  - Steal its lines of code
-	 *  - append $closure_append to the closure's lines of code
-	 *    $closure_append = "return get_defined_vars()"
-	 *  - use these lines of code to eval a new closure with
-	 *    use ($param) added.
-	 *  
-	 * @param \Closure $closure
-	 * @param string $closure_append 
-	 * @param array $param
-	 * @return \Closure
-	 */
-	private function append_to_closure(\Closure $closure, $closure_append, $param)
-	{
-		$closure_append = "\n".trim($closure_append,"\n; ").";\n";
-		
-		$reflection_work = new \ReflectionFunction($closure);
-		$file = new \SplFileObject($reflection_work->getFileName());
-		$file->seek($reflection_work->getStartLine()-1);
-		$code = '';
-		while ($file->key() < $reflection_work->getEndLine())
-		{
-			$code .= $file->current();
-			$file->next();
-		}
-		$begin = strpos($code, 'function');
-		$end = strrpos($code, '}');
-		$code = substr($code, $begin, $end - $begin + 1);
-		
-		$code = $this->replace_constants($code, dirname($file->getRealPath()));
-		
-		$code = preg_replace('/(return.*;)/','//$1',$code);
-		$code = preg_replace('/(})$/',$closure_append.'$1',$code);
-		
-		$closure = null;
-		$code = str_replace('function()','function() use ($param)',$code);
-		eval('namespace '.__NAMESPACE__.'; $closure = '.$code.';');
-		return $closure;
 	}
 	
 	/**
@@ -317,11 +280,5 @@ class Core {
 	private function last_route()
 	{
 		return end($this->routes);
-	}
-	
-	private function replace_constants($code, $path_to_code_file)
-	{
-		$code = str_replace('__DIR__',"'{$path_to_code_file}'", $code);
-		return $code;
 	}
 }
