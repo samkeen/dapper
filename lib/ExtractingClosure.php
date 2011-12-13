@@ -36,11 +36,25 @@ class ExtractingClosure {
 	 *  - use these lines of code to eval a new closure with
 	 *    use ($param) added.
 	 * 
-	 * @param $param
+	 * @param array $closure_uses 
+	 * ex: array(
+	 *   'path' => array(
+	 *     ':name' => 'bob' 
+	 * )
+	 * Will result in 
+	 * $path = array(':name' => 'bob');
+	 * being defined in this functions namespace and
+	 * 'use ($path)' 
+	 * being included in the construction of the new closure.
+	 * 
 	 * @return \Closure
 	 */
-	private function invoke_closure($param)
+	private function invoke_closure($closure_uses)
 	{
+		// bring paramd into this namespace
+		extract($closure_uses);
+		// construct the use() statement to expose these params to the new closure 
+		$use_statement = $this->closure_use_statement(array_keys($closure_uses));
 		$closure_append = "\n".trim($this->extraction_statement,"\n; ").";\n";
 		
 		$reflection_work = new \ReflectionFunction($this->initial_closure);
@@ -62,9 +76,16 @@ class ExtractingClosure {
 		$code = preg_replace('/(})$/',$closure_append.'$1',$code);
 		
 		$closure = null;
-		$code = str_replace('function()','function() use ($param)',$code);
+		$code = str_replace('function()','function() '.$use_statement, $code);
 		eval('namespace '.__NAMESPACE__.'; $closure = '.$code.';');
 		return $closure;
+	}
+	
+	private function closure_use_statement($uses)
+	{
+		return "use (".implode(", ", array_map(
+			function($val){return "\${$val}";},
+			$uses)).")";
 	}
 	
 	/**

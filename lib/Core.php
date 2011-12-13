@@ -7,9 +7,15 @@ namespace clear;
  */
 class Core {
 	
-	const TEMPLATE_ENGINE = 'twig';
-	const DEFAULT_CONTROLLER = 'home';
-	
+	/**
+	 * the name used to expose path elements to the do_work
+	 * i.e. (path in this case)
+	 * ->do_work(function(){
+	 *	 $message = "Hello {$path[':name']}";
+	 * })
+	 */
+	const URI_PATH_KEY_NAME = 'path';
+		
 	private static $config = array(
 		'template_engine' => 'php',
 		'template_env' => array(),
@@ -21,7 +27,6 @@ class Core {
 	private $requested_route;
 	private $matched_request_route_params;
 	private $request_method;
-	
 	
 	/*
 	 * doWork, expose, and render are considered the 'public api'
@@ -162,20 +167,26 @@ class Core {
 		if($route_work = $route->executable_workload())
 		{
 			$template_payload = array_intersect_key(
-				$route_work($this->matched_request_route_params),
+				$route_work(array(
+					self::URI_PATH_KEY_NAME => $this->matched_request_route_params)
+				),
 				$route->exposed_work()
 			);
 		}
 		
-		if(self::TEMPLATE_ENGINE=='twig')
+		if(self::$config['template_engine']=='twig')
 		{
 			$twig = $this->init_twig();
 			echo $twig->render("content/{$route->targeted_view()}.htm.twig", $template_payload);
 		} 
-		else if(self::TEMPLATE_ENGINE=='php')
+		else if(self::$config['template_engine']=='php')
 		{
 			extract($template_payload);
 			include __DIR__ . self::$config['template_dir']."/{$route->targeted_view()}.htm.php";
+		}
+		else
+		{
+			throw new \Exception("Unknown template engine: [".self::$config['template_engine']."]");
 		}
 	}
 	/**
@@ -219,9 +230,6 @@ class Core {
 	{
 		$matched_route = null;
 		$disected_request_route = $this->disect_route($this->requested_route);
-		$disected_request_route['controller']=$disected_request_route['controller']===""
-			? self::DEFAULT_CONTROLLER
-			: $disected_request_route['controller'];
 		$match = null;
 		foreach($this->routes as $known_route)
 		{
