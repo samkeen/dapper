@@ -27,6 +27,8 @@ Core::config('template_env',array(
 Core::config('template_dir', TOP_DIR."/templates");
 Core::config('cache_dir', TOP_DIR."/cache_write");
 
+Core::request_method($_SERVER['REQUEST_METHOD']);
+
 spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
 
 
