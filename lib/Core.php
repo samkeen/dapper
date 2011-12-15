@@ -15,6 +15,8 @@ class Core {
 	 * })
 	 */
 	const URI_PATH_KEY_NAME = 'path';
+	
+	private static $instance;
 		
 	private static $config = array(
 		'template_engine' => 'php',
@@ -54,9 +56,14 @@ class Core {
 	 */
 	function expose($name_to_expose_to_view)
 	{
-		$this->last_route()->exposed_work( 
-			array_fill_keys(array_map('trim', explode(',', $name_to_expose_to_view)),null)
-		);
+		$name_to_expose_to_view = trim($name_to_expose_to_view);
+		if($name_to_expose_to_view !== "")
+		{
+			$this->last_route()->exposed_work(
+				// remove empty elements and re-index
+				array_values(array_filter(preg_split('/[\s,]/',$name_to_expose_to_view)))
+			);
+		}
 		return $this;
 	}
 	
@@ -85,12 +92,11 @@ class Core {
 	 */
 	static function instance()
 	{
-		static $core;
-		if(! $core)
+		if(! self::$instance)
 		{
-			$core = new self;
+			self::$instance = new self;
 		}
-		return $core;
+		return self::$instance;
 	}
 	
 	/**
@@ -173,10 +179,21 @@ class Core {
 		if($route_work = $route->executable_workload())
 		{
 			$template_payload = array_intersect_key(
+				/*
+				 * the param used when executing the Extracting closure signifies
+				 * the variable scope that will be used (use()) for the ultimate
+				 * execution of the closure.
+				 */
 				$route_work(array(
 					self::URI_PATH_KEY_NAME => $this->matched_request_route_params)
 				),
-				$route->exposed_work()
+				/*
+				 * an ExtractionClosre retuns all of its internal var scope as a key/val
+				 * array. Of that array, $route->exposed_work() is a white list of keys 
+				 * that determines what will be exposed to the view tier ($template_payload)
+				 */
+				array_fill_keys($route->exposed_work(), null)
+				
 			);
 		}
 		
@@ -291,8 +308,20 @@ class Core {
 	/**
 	 * @return RouteWork
 	 */
-	private function last_route()
+	function last_route()
 	{
-		return end($this->routes);
+		if( ! $last_route = end($this->routes))
+		{
+			throw new Exception\InvalidStateException(__METHOD__."() called with no routes defined");
+		}
+		return $last_route;
+	}
+	/**
+	 * Used for testing to reset the instance
+	 * 
+	 */
+	static function reset()
+	{
+		self::$instance = null;
 	}
 }

@@ -11,10 +11,7 @@ class RouteWork {
 	private $uri_path_segments;
 	private $executable_workload;
 	private $targeted_view;
-	/**
-	 * @var public 
-	 */
-	private $exposed_work;
+	private $exposed_work = array();
 	
 	function __construct($route, $http_method, $controller, $uri_path_segments)
 	{

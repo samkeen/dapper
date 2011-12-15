@@ -29,6 +29,16 @@ class ExtractingClosure {
 	}
 	
 	/**
+	 * simple getter
+	 * 
+	 * @return \Closure
+	 */
+	function initial_closure()
+	{
+		return $this->initial_closure;
+	}
+	
+	/**
 	 * This is where things get a little crazy
 	 * Take the closure supplied in the doWork call
 	 *  - Steal its lines of code

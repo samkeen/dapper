@@ -2,8 +2,6 @@
 /**
  * 
  */
-spl_autoload_register('BaseTestCase::autoload');
-
 class BaseTestCase extends PHPUnit_Framework_TestCase {
 		
 	static function autoload($class)
@@ -15,3 +13,5 @@ class BaseTestCase extends PHPUnit_Framework_TestCase {
     	require("$lib_dir/$class");
 	}
 }
+
+spl_autoload_register('BaseTestCase::autoload');
