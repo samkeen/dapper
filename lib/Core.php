@@ -15,9 +15,7 @@ class Core {
 	 * })
 	 */
 	const URI_PATH_KEY_NAME = 'path';
-	
-	private static $instance;
-		
+			
 	private static $config = array(
 		'template_engine' => 'php',
 		'template_env' => array(),
@@ -28,7 +26,21 @@ class Core {
 	private $routes = array();
 	private $requested_route;
 	private $matched_request_route_params;
-	private static $request_method;
+	private $request_method;
+	
+	/**
+	 * @param string $request_method
+	 */
+	function __construct($request_method)
+	{
+		$this->request_method = $request_method;
+		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
+		if(self::$config['template_engine']=="twig")
+		{
+			require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
+			\Twig_Autoloader::register();
+		}
+	}
 	
 	/*
 	 * doWork, expose, and render are considered the 'public api'
@@ -91,34 +103,6 @@ class Core {
 	 */
 	
 	/**
-	 * singleton instance accesor
-	 * 
-	 * @return Core
-	 */
-	static function instance()
-	{
-		if(! self::$instance)
-		{
-			self::$instance = new self;
-		}
-		return self::$instance;
-	}
-	
-	/**
-	 * privatized constructor.
-	 * @see $this->__construct()
-	 */
-	private function __construct()
-	{
-		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
-		if(self::$config['template_engine']=="twig")
-		{
-			require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
-			\Twig_Autoloader::register();
-		}
-	}
-	
-	/**
 	 * autoloader for the entire app
 	 * 
 	 * @param string $class
@@ -129,17 +113,6 @@ class Core {
 		$class = str_replace('\\', '/', $class) . '.php';
 		if( ! strstr($class, __NAMESPACE__)) {return false;}
     	require(str_replace(__NAMESPACE__.'/','',$class));
-	}
-	/**
-	 * 
-	 * @param null $http_request_method
-	 * @return null
-	 */
-	static function request_method($http_request_method=null)
-	{
-		return $http_request_method 
-			? self::$request_method = $http_request_method
-			: self::$request_method;
 	}
 	
 	/**
@@ -246,7 +219,7 @@ class Core {
 		else
 		{
 			echo "<pre>\n";
-			echo "Requested Route [".self::$request_method." {$this->requested_route}] not found\n";
+			echo "Requested Route [{$this->request_method} {$this->requested_route}] not found\n";
 			echo "Known Routes:\n";
 			echo print_r($this->routes, true);
 			echo "\n</pre>";
@@ -265,7 +238,7 @@ class Core {
 		$match = null;
 		foreach($this->routes as $known_route)
 		{
-			if(    self::$request_method == $known_route->http_method()
+			if(    $this->request_method == $known_route->http_method()
 				&& $disected_request_route['controller'] == $known_route->controller())
 			{
 				$matched_route = $known_route;
@@ -324,13 +297,5 @@ class Core {
 			throw new Exception\InvalidStateException(__METHOD__."() called with no routes defined");
 		}
 		return $last_route;
-	}
-	/**
-	 * Used for testing to reset the instance
-	 * 
-	 */
-	static function reset()
-	{
-		self::$instance = null;
 	}
 }

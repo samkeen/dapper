@@ -27,8 +27,6 @@ Core::config('template_env',array(
 Core::config('template_dir', TOP_DIR."/templates");
 Core::config('cache_dir', TOP_DIR."/cache_write");
 
-Core::request_method($_SERVER['REQUEST_METHOD']);
-
 spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
 
 
@@ -36,24 +34,28 @@ spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
  * index.php method
  * 
  * Single global function.  Gets to initial refernce to the
- * Core singleton and then proxies calls of Core::append_route()
+ * Core manages it as a Singleton.  Then proxies calls of Core::append_route()
+ * Also registers Core::render_route() and the PHP engine 
+ * shutdown function
  * 
  * @param string $route ex: "Get /hello/:name"  
  * @return Core
  */
 function with($route)
 {
-	return Core::instance()->append_route($route);
-}
-
-/**
- * this is where we will invoke the matched route
- */
-register_shutdown_function(
-	function()
+	static $instance;
+	if( ! $instance)
 	{
-		Core::instance()->render_route();
+		$instance = new Core($_SERVER['REQUEST_METHOD']);
+		register_shutdown_function(
+			/**
+			 * this is where we will invoke the matched route
+			 */
+			function() use($instance)
+			{
+				$instance->render_route();
+			}
+		);
 	}
-);
-
- 
+	return $instance->append_route($route);
+}

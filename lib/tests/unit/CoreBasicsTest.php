@@ -2,27 +2,19 @@
 require_once __DIR__ . "/BaseTestCase.php";
 
 class CoreBasicsTest extends BaseTestCase {
+	
 	protected function setUp()
 	{
-		clear\Core::reset();
 		parent::setUp();
+		$this->core = new \clear\Core('GET');
 	}
-
-
-	function testSingleton()
-	{
-		$singleton1 = clear\Core::instance();
-		$singleton2 = clear\Core::instance();
-		$this->assertSame($singleton1, $singleton2, "The 2 calls to instance()"
-			." should retunr the same Object");
-	}
-	
+		
 	/**
      * @expectedException clear\Exception\InvalidStateException
      */
     function testDo_workInvalidStateExceptionThrown()
     {
-		clear\Core::instance()
+		$this->core
 			->do_work(function(){});
     }
 	
@@ -30,14 +22,14 @@ class CoreBasicsTest extends BaseTestCase {
 	{
 		$other_work = function(){$x=1;};
 		$work_for_last_route = function(){};
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /123')
 			->do_work($other_work)
 			->append_route('GET /abc')
 			->do_work($work_for_last_route);
-		$initial_workload = $core->last_route()->executable_workload()->initial_closure();
-		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $core->do_work($work)'
-			.' should be the same work returned by $core->last_route()->executable_workload()->initial_closure()');
+		$initial_workload = $this->core->last_route()->executable_workload()->initial_closure();
+		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $this->core->do_work($work)'
+			.' should be the same work returned by $this->core->last_route()->executable_workload()->initial_closure()');
 	}
 
     /**
@@ -45,7 +37,7 @@ class CoreBasicsTest extends BaseTestCase {
      */
     function testBlindCallToExpose()
     {
-		clear\Core::instance()
+		$this->core
 			->expose('bob');
     }
 	
@@ -53,12 +45,12 @@ class CoreBasicsTest extends BaseTestCase {
 	{
 		$other_expose_params = "message";
 		$expose_params_for_last_route = "user";
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /123')
 			->expose($other_expose_params)
 			->append_route('GET /abc')
 			->expose($expose_params_for_last_route);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array('user'), 'The returned work to expose'
 		 .' should have been an array with one element: array("user")');
 	}
@@ -66,20 +58,20 @@ class CoreBasicsTest extends BaseTestCase {
 	function testExposeEmptyStringReturnsEmptyArray()
 	{
 		$work_to_expose = "";
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
 	function testExposeNullReturnsEmptyArray()
 	{
 		$work_to_expose = null;
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
@@ -87,10 +79,10 @@ class CoreBasicsTest extends BaseTestCase {
 	function testExposeCommaDelimListReturnsPoperArray()
 	{
 		$work_to_expose = "user, message";
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -99,10 +91,10 @@ class CoreBasicsTest extends BaseTestCase {
 	function testExposeSpaceDelimListReturnsPoperArray()
 	{
 		$work_to_expose = "user   message";
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -111,10 +103,10 @@ class CoreBasicsTest extends BaseTestCase {
 	function testExposeTooManyCommasReturnsPoperArray()
 	{
 		$work_to_expose = "user, ,message,";
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -125,7 +117,7 @@ class CoreBasicsTest extends BaseTestCase {
      */
     function testBlindCallToRenderThrowsException()
     {
-		clear\Core::instance()
+		$this->core
 			->render('bob');
     }
 	
@@ -134,19 +126,19 @@ class CoreBasicsTest extends BaseTestCase {
 	 */
 	function testEmptyCallToRenderThrowsException()
 	{
-		clear\Core::instance()
+		$this->core
 			->append_route('GET /abc')
 			->render('');
 	}
 	
 	function testRenderViewLandsOnLastRoute()
 	{
-		$core = clear\Core::instance()
+		$this->core
 			->append_route('GET /ted')
 			->render('ted')
 			->append_route('GET /bob')
 			->render('bob');
-		$this->assertEquals('bob', $core->last_route()->targeted_view());
+		$this->assertEquals('bob', $this->core->last_route()->targeted_view());
 	}
 
 
