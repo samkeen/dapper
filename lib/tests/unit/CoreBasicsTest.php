@@ -28,12 +28,15 @@ class CoreBasicsTest extends BaseTestCase {
 	
 	function testDo_workArrivesOnLastRoute()
 	{
-		$work = function(){};
+		$other_work = function(){$x=1;};
+		$work_for_last_route = function(){};
 		$core = clear\Core::instance()
+			->append_route('GET /123')
+			->do_work($other_work)
 			->append_route('GET /abc')
-			->do_work($work);
+			->do_work($work_for_last_route);
 		$initial_workload = $core->last_route()->executable_workload()->initial_closure();
-		$this->assertSame($work, $initial_workload, 'The provided work to $core->do_work($work)'
+		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $core->do_work($work)'
 			.' should be the same work returned by $core->last_route()->executable_workload()->initial_closure()');
 	}
 
@@ -48,10 +51,13 @@ class CoreBasicsTest extends BaseTestCase {
 	
 	function testExposeArrivesOnLastRoute()
 	{
-		$work_to_expose = "user";
+		$other_expose_params = "message";
+		$expose_params_for_last_route = "user";
 		$core = clear\Core::instance()
+			->append_route('GET /123')
+			->expose($other_expose_params)
 			->append_route('GET /abc')
-			->expose($work_to_expose);
+			->expose($expose_params_for_last_route);
 		$exposed_work = $core->last_route()->exposed_work();
 		$this->assertEquals($exposed_work, array('user'), 'The returned work to expose'
 		 .' should have been an array with one element: array("user")');
@@ -115,37 +121,34 @@ class CoreBasicsTest extends BaseTestCase {
 	}
 
     /**
-     * @todo Implement testRender().
+     * @expectedException clear\Exception\InvalidStateException
      */
-    function testRender()
+    function testBlindCallToRenderThrowsException()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		clear\Core::instance()
+			->render('bob');
     }
+	
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	function testEmptyCallToRenderThrowsException()
+	{
+		clear\Core::instance()
+			->append_route('GET /abc')
+			->render('');
+	}
+	
+	function testRenderViewLandsOnLastRoute()
+	{
+		$core = clear\Core::instance()
+			->append_route('GET /ted')
+			->render('ted')
+			->append_route('GET /bob')
+			->render('bob');
+		$this->assertEquals('bob', $core->last_route()->targeted_view());
+	}
 
-    /**
-     * @todo Implement testInstance().
-     */
-    function testInstance()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testAutoload().
-     */
-    function testAutoload()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
 
     /**
      * @todo Implement testRequest_method().

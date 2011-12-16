@@ -75,6 +75,11 @@ class Core {
 	 */
 	function render($view_name)
 	{
+		$view_name = trim($view_name);
+		if( ! $view_name)
+		{
+			throw new \InvalidArgumentException('$view_name param should not be empty');
+		}
 		$this->last_route()->targeted_view($view_name);
 		return $this;
 	}
@@ -125,7 +130,11 @@ class Core {
 		if( ! strstr($class, __NAMESPACE__)) {return false;}
     	require(str_replace(__NAMESPACE__.'/','',$class));
 	}
-	
+	/**
+	 * 
+	 * @param null $http_request_method
+	 * @return null
+	 */
 	static function request_method($http_request_method=null)
 	{
 		return $http_request_method 
