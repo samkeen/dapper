@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . "/BaseTestCase.php";
+require_once __DIR__ . "/../BaseUnitTestCase.php";
 /**
  * This tests that we have the proper state after including the bootup script
  */
-class BootupTest extends BaseTestCase {
+class BootupUnitTest extends BaseUnitTestCase {
 	
 	
 	

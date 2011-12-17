@@ -1,12 +1,17 @@
 <?php
-require_once __DIR__ . "/BaseTestCase.php";
+require_once __DIR__ . "/../BaseUnitTestCase.php";
 
-class CoreBasicsTest extends BaseTestCase {
+class CoreBasicsTest extends BaseUnitTestCase {
+	
+	/**
+	 * @var clear\Core
+	 */
+	private $core;
 	
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new \clear\Core('GET');
+		$this->core = new clear\Core('GET', array());
 	}
 		
 	/**
@@ -143,59 +148,53 @@ class CoreBasicsTest extends BaseTestCase {
 
 
     /**
-     * @todo Implement testRequest_method().
+     * @expectedException \InvalidArgumentException
      */
-    function testRequest_method()
+    function testAppendRouteThrowExceptionForUnknowHttpMethod()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->core
+			->append_route('FU /');
+    }
+	/**
+     * @expectedException \InvalidArgumentException
+     */
+    function testAppendRouteThrowExceptionForMissingPath()
+    {
+        $this->core
+			->append_route('GET');
+    }
+	/**
+     * @expectedException \InvalidArgumentException
+     */
+    function testAppendRouteThrowExceptionForMissingHttpMethod()
+    {
+        $this->core
+			->append_route('/user');
     }
 
-    /**
-     * @todo Implement testConfig().
-     */
-    function testConfig()
+    function testAppendRouteHttpMethodAndPathProperlyParsed()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $last_route = $this->core
+			->append_route('GET /user')
+			->last_route();
+		$this->assertEquals('GET', $last_route->http_method(),"The last route should be"
+			. " the one defined by ->append_route() so it http_method should be GET and"
+			. " controller should be user");
+		$this->assertEquals('user', $last_route->controller(),"The last route should be"
+			. " the one defined by ->append_route() so it http_method should be GET and"
+			. " controller should be user");
     }
-
-    /**
-     * @todo Implement testAppend_route().
-     */
-    function testAppend_route()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testRender_view().
-     */
-    function testRender_view()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testRender_route().
-     */
-    function testRender_route()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
+	
+	function testAppendRoutePathSegemntsProperlyParsed()
+	{
+		$last_route = $this->core
+			->append_route('GET /user/:id/:location')
+			->last_route();
+		$this->assertEquals(array(':id', ':location'), $last_route->uri_path_segments(),
+			"The last route should be"
+			. " the one defined by ->append_route() so its uri_path_segments should be "
+			. " array(':id', ':location')");
+	}
 	
 }
  

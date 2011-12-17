@@ -16,7 +16,7 @@ class Core {
 	 */
 	const URI_PATH_KEY_NAME = 'path';
 			
-	private static $config = array(
+	private $config = array(
 		'template_engine' => 'php',
 		'template_env' => array(),
 		'template_dir' => null,
@@ -30,12 +30,14 @@ class Core {
 	
 	/**
 	 * @param string $request_method
+	 * @param array $config
 	 */
-	function __construct($request_method)
+	function __construct($request_method, $config)
 	{
 		$this->request_method = $request_method;
+		$this->config = array_merge($this->config, $config);
 		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
-		if(self::$config['template_engine']=="twig")
+		if($this->config['template_engine']=="twig")
 		{
 			require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
 			\Twig_Autoloader::register();
@@ -116,23 +118,6 @@ class Core {
 	}
 	
 	/**
-	 * Setter for static env config values
-	 * 
-	 * @see self::$config
-	 * @param string $config_key
-	 * @param mixed $config_value
-	 * @return void
-	 */
-	public static function config($config_key, $config_value)
-	{
-		if( ! array_key_exists($config_key, self::$config))
-		{
-			throw new \Exception("Unknown config key [{$config_key}]");
-		}
-		self::$config[$config_key] = $config_value;
-	}
-	
-	/**
 	 * 
 	 * @param string $route 
 	 * @return Core
@@ -143,7 +128,7 @@ class Core {
 		if( ! preg_match('/^(GET|PUT|POST|DELETE) +(.*)$/', $route, $match)
 		   || (trim($match[2])==''))
 		{
-			throw new \Exception("Malformed route [$route]."
+			throw new \InvalidArgumentException("Malformed route [$route]."
 			 ."Routes should start w/ HTTP method GET|PUT|POST|DELETE "
 			 ."followed by a URI path segment");
 		}
@@ -154,7 +139,18 @@ class Core {
 		);
 		return $this;
 	}
-	
+	/**
+	 * This extracts a 'payload' from the RouteWork for the matched Route
+	 * The 'payload' is a set scope of variables retrieved when invoking
+	 * the RouteWork's ExtractingClosure.
+	 * This variable scope is intersected with the whitelist defined by ->exposse() 
+	 * for the the given $route.
+	 * Finally, this variable scope is sent to a rendering engine which will render 
+	 * a view.
+	 * 
+	 * @param RouteWork $route
+	 * @throws \Exception
+	 */
 	function render_view(RouteWork $route)
 	{
 		$template_payload = array();
@@ -175,23 +171,22 @@ class Core {
 				 * that determines what will be exposed to the view tier ($template_payload)
 				 */
 				array_fill_keys($route->exposed_work(), null)
-				
 			);
 		}
 		
-		if(self::$config['template_engine']=='twig')
+		if($this->config['template_engine']=='twig')
 		{
 			$twig = $this->init_twig();
 			echo $twig->render("content/{$route->targeted_view()}.htm.twig", $template_payload);
 		} 
-		else if(self::$config['template_engine']=='php')
+		else if($this->config['template_engine']=='php')
 		{
 			extract($template_payload);
-			include __DIR__ . self::$config['template_dir']."/{$route->targeted_view()}.htm.php";
+			include __DIR__ . $this->config['template_dir']."/{$route->targeted_view()}.htm.php";
 		}
 		else
 		{
-			throw new \Exception("Unknown template engine: [".self::$config['template_engine']."]");
+			throw new \Exception("Unknown template engine: [".$this->config['template_engine']."]");
 		}
 	}
 	/**
@@ -200,8 +195,8 @@ class Core {
 	private function init_twig()
 	{
 		return new \Twig_Environment(
-			new \Twig_Loader_Filesystem(self::$config['template_dir']),
-			self::$config['template_env']
+			new \Twig_Loader_Filesystem($this->config['template_dir']),
+			$this->config['template_env']
 		);
 	}
 	/**
@@ -224,7 +219,6 @@ class Core {
 			echo print_r($this->routes, true);
 			echo "\n</pre>";
 		}
-		
 	}
 	
 	/**
