@@ -24,9 +24,11 @@ class Core {
 	);
 	
 	private $routes = array();
+	/**
+	 * @var Route
+	 */
 	private $requested_route;
 	private $matched_request_route_params;
-	private $request_method;
 	
 	/**
 	 * @param string $request_method
@@ -34,9 +36,10 @@ class Core {
 	 */
 	function __construct($request_method, $config)
 	{
-		$this->request_method = $request_method;
 		$this->config = array_merge($this->config, $config);
-		$this->requested_route = strtolower(trim(filter_input(INPUT_GET, '_c')));
+		$this->requested_route = new Route(
+			$request_method, strtolower(trim(filter_input(INPUT_GET, '_c')))
+		);
 		if($this->config['template_engine']=="twig")
 		{
 			require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
@@ -58,7 +61,7 @@ class Core {
 	 */
 	function do_work(\Closure $work)
 	{
-		$this->last_route()->executable_workload($work);
+		$this->last_route()->work($work);
 		return $this;
 	}
 	
@@ -73,7 +76,7 @@ class Core {
 		$name_to_expose_to_view = trim($name_to_expose_to_view);
 		if($name_to_expose_to_view !== "")
 		{
-			$this->last_route()->exposed_work(
+			$this->last_route()->exposed_work_var_names(
 				// remove empty elements and re-index
 				array_values(array_filter(preg_split('/[\s,]/',$name_to_expose_to_view)))
 			);
@@ -125,36 +128,38 @@ class Core {
 	function append_route($route)
 	{
 		$match = null;
-		if( ! preg_match('/^(GET|PUT|POST|DELETE) +(.*)$/', $route, $match)
-		   || (trim($match[2])==''))
+		/*
+		 * look for pattern "{http method} {http path}"
+		 */
+		if( ! preg_match('/^(?P<method>\w+) +(?P<path>.*)$/', $route, $match)
+		   || (trim($match['path'])==''))
 		{
 			throw new \InvalidArgumentException("Malformed route [$route]."
-			 ."Routes should start w/ HTTP method GET|PUT|POST|DELETE "
-			 ."followed by a URI path segment");
+			 ."Routes should start w/ {HTTP method} "
+			 ."followed by a {URI path segment}\nex: 'GET /user'");
 		}
-		$http_method = $match[1];
-		$disected_route = $this->disect_route($match[2]);
-		$this->routes[$route] = new RouteWork(
-			$route, $http_method, $disected_route['controller'], $disected_route['uri_path_segments']
+		$http_method = $match['method'];
+		$this->routes[$route] = new Route(
+			$http_method, $match['path']
 		);
 		return $this;
 	}
 	/**
-	 * This extracts a 'payload' from the RouteWork for the matched Route
+	 * This extracts a 'payload' from the Route for the matched Route
 	 * The 'payload' is a set scope of variables retrieved when invoking
-	 * the RouteWork's ExtractingClosure.
+	 * the Route's ExtractingClosure.
 	 * This variable scope is intersected with the whitelist defined by ->exposse() 
 	 * for the the given $route.
 	 * Finally, this variable scope is sent to a rendering engine which will render 
 	 * a view.
 	 * 
-	 * @param RouteWork $route
+	 * @param Route $route
 	 * @throws \Exception
 	 */
-	function render_view(RouteWork $route)
+	function render_view(Route $route)
 	{
 		$template_payload = array();
-		if($route_work = $route->executable_workload())
+		if($route_work = $route->work())
 		{
 			$template_payload = array_intersect_key(
 				/*
@@ -167,10 +172,10 @@ class Core {
 				),
 				/*
 				 * an ExtractionClosre retuns all of its internal var scope as a key/val
-				 * array. Of that array, $route->exposed_work() is a white list of keys 
+				 * array. Of that array, $route->exposed_work_var_names() is a white list of keys 
 				 * that determines what will be exposed to the view tier ($template_payload)
 				 */
-				array_fill_keys($route->exposed_work(), null)
+				array_fill_keys($route->exposed_work_var_names(), null)
 			);
 		}
 		
@@ -214,7 +219,7 @@ class Core {
 		else
 		{
 			echo "<pre>\n";
-			echo "Requested Route [{$this->request_method} {$this->requested_route}] not found\n";
+			echo "Requested Route [{$this->requested_route->http_method()} {$this->requested_route->path()}] not found\n";
 			echo "Known Routes:\n";
 			echo print_r($this->routes, true);
 			echo "\n</pre>";
@@ -228,17 +233,16 @@ class Core {
 	private function match_route()
 	{
 		$matched_route = null;
-		$disected_request_route = $this->disect_route($this->requested_route);
 		$match = null;
 		foreach($this->routes as $known_route)
 		{
-			if(    $this->request_method == $known_route->http_method()
-				&& $disected_request_route['controller'] == $known_route->controller())
+			if(    $this->requested_route->http_method() == $known_route->http_method()
+				&& $this->requested_route->controller() == $known_route->controller())
 			{
 				$matched_route = $known_route;
 				$this->match_route_keys_to_request_values(
 					$matched_route->uri_path_segments(),
-					$disected_request_route['uri_path_segments']
+					$this->requested_route->uri_path_segments()
 				);
 				break;
 			}
@@ -264,25 +268,10 @@ class Core {
 		}
 	}
 	
-	/**
-	 * @param string $raw_route ex: "/hello/:name"
-	 * @return array ex: array(
-	 * 		'controller' => "hello",
-	 * 		'uri_path_sements' => array(
-	 * 			0 => ':name'
-	 * 		)
-	 * )
-	 */
-	private function disect_route($raw_route)
-	{
-		$uri_path_segments = explode('/', trim($raw_route, '/'));
-		$controller = array_shift($uri_path_segments);
-		$controller = $controller==="" ? "/" : $controller;
-		return array('controller' => $controller, 'uri_path_segments' => $uri_path_segments);
-	}
+	
 	
 	/**
-	 * @return RouteWork
+	 * @return Route
 	 */
 	function last_route()
 	{

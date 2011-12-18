@@ -21,22 +21,7 @@ class ExtractingClosure {
 	{
 		$this->initial_closure = $initial_closure;
 	}
-	
-	public function __invoke($param)
-	{
-		$closure = $this->invoke_closure($param);
-		return $closure();
-	}
-	
-	/**
-	 * simple getter
-	 * 
-	 * @return \Closure
-	 */
-	function initial_closure()
-	{
-		return $this->initial_closure;
-	}
+
 	
 	/**
 	 * This is where things get a little crazy
@@ -59,7 +44,7 @@ class ExtractingClosure {
 	 * 
 	 * @return \Closure
 	 */
-	private function invoke_closure($closure_uses)
+	function invoke(array $closure_uses = null)
 	{
 		// bring paramd into this namespace
 		extract($closure_uses);

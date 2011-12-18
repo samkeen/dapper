@@ -32,9 +32,9 @@ class CoreBasicsTest extends BaseUnitTestCase {
 			->do_work($other_work)
 			->append_route('GET /abc')
 			->do_work($work_for_last_route);
-		$initial_workload = $this->core->last_route()->executable_workload()->initial_closure();
+		$initial_workload = $this->core->last_route()->work()->closure();
 		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $this->core->do_work($work)'
-			.' should be the same work returned by $this->core->last_route()->executable_workload()->initial_closure()');
+			.' should be the same work returned by $this->core->last_route()->work()->closure()');
 	}
 
     /**
@@ -55,7 +55,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 			->expose($other_expose_params)
 			->append_route('GET /abc')
 			->expose($expose_params_for_last_route);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array('user'), 'The returned work to expose'
 		 .' should have been an array with one element: array("user")');
 	}
@@ -66,7 +66,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
@@ -76,7 +76,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
@@ -87,7 +87,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -99,7 +99,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -111,7 +111,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 		$this->core
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_route()->exposed_work();
+		$exposed_work = $this->core->last_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -195,6 +195,9 @@ class CoreBasicsTest extends BaseUnitTestCase {
 			. " the one defined by ->append_route() so its uri_path_segments should be "
 			. " array(':id', ':location')");
 	}
+	
+	
+	
 	
 }
  
