@@ -23,9 +23,9 @@ class Route {
 	
 	function __construct($http_method, $path)
 	{
-		$this->path = "/".trim($path,' /');
 		$this->set_http_method($http_method);
 		$disected_path = $this->disect_path($path);
+		$this->path = $disected_path['path'];
 		$this->controller = $disected_path['controller'];
 		$this->uri_path_segments = $disected_path['uri_path_segments'];
 	}
@@ -101,10 +101,26 @@ class Route {
 	 */
 	private function disect_path($raw_route)
 	{
-		$uri_path_segments = explode('/', trim($raw_route, '/'));
+		$uri_path_segments = array_filter(explode('/', trim($raw_route, '/')));
 		$controller = array_shift($uri_path_segments);
-		$controller = $controller==="" ? "/" : $controller;
-		return array('controller' => $controller, 'uri_path_segments' => $uri_path_segments);
+		/*
+		 * only allow pattern /:\w+/ for uri path segments
+		 */
+		$uri_path_segments = array_values(array_filter(
+			$uri_path_segments,
+			function($element){
+				return $element[0]==':'
+					&& ! preg_match('/:.*\W+/', $element);
+			}
+		));
+		$post_controller_path = $uri_path_segments 
+			? "/".implode('/',array_map('trim', $uri_path_segments)) 
+			: "";
+		return array(
+			'path' => "/{$controller}{$post_controller_path}",
+			'controller' => $controller==="" ? "/" : strtolower($controller),
+			'uri_path_segments' => $uri_path_segments
+		);
 	}
 	
 }
