@@ -4,6 +4,8 @@ A terse and restful PHP front controller based web framework.
 The focus of this framework is on the syntax of the route matching in the front controller (index.php). 
 "when you see this route, expose this from this work to this view."
 
+Utilizing a Fluent Interface 
+
 ## Template Support 
 
 * templateless
