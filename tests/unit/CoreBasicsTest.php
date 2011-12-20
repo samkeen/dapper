@@ -143,7 +143,7 @@ class CoreBasicsTest extends BaseUnitTestCase {
 			->render('ted')
 			->append_route('GET /bob')
 			->render('bob');
-		$this->assertEquals('bob', $this->core->last_route()->targeted_view());
+		$this->assertEquals('bob', $this->core->last_route()->view_name());
 	}
 
 

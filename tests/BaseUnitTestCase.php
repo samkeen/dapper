@@ -6,7 +6,7 @@ class BaseUnitTestCase extends PHPUnit_Framework_TestCase {
 		
 	static function autoload($class)
 	{
-		$lib_dir = realpath(__DIR__.'/../');
+		$lib_dir = realpath(__DIR__.'/../lib');
 		$class = str_replace('\\', '/', $class) . '.php';
 		if( ! strstr($class, 'clear/')) {return false;}
 		$class = str_replace('clear/','',$class);

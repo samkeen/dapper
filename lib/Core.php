@@ -38,7 +38,8 @@ class Core {
 	{
 		$this->config = array_merge($this->config, $config);
 		$this->requested_route = new Route(
-			$request_method, strtolower(trim(filter_input(INPUT_GET, '_c')))
+			$request_method, strtolower(trim(filter_input(INPUT_GET, '_c'))),
+			$is_request_route = true
 		);
 		if($this->config['template_engine']=="twig")
 		{
@@ -97,7 +98,7 @@ class Core {
 		{
 			throw new \InvalidArgumentException('$view_name param should not be empty');
 		}
-		$this->last_route()->targeted_view($view_name);
+		$this->last_route()->view_name($view_name);
 		return $this;
 	}
 	
@@ -182,12 +183,12 @@ class Core {
 		if($this->config['template_engine']=='twig')
 		{
 			$twig = $this->init_twig();
-			echo $twig->render("content/{$route->targeted_view()}.htm.twig", $template_payload);
+			echo $twig->render("content/{$route->view_name()}.htm.twig", $template_payload);
 		} 
 		else if($this->config['template_engine']=='php')
 		{
 			extract($template_payload);
-			include __DIR__ . $this->config['template_dir']."/{$route->targeted_view()}.htm.php";
+			include __DIR__ . $this->config['template_dir']."/{$route->view_name()}.htm.php";
 		}
 		else
 		{
@@ -228,7 +229,7 @@ class Core {
 	
 	/**
 	 * 
-	 * @return RouteWork
+	 * @return Route
 	 */
 	private function match_route()
 	{

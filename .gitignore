@@ -1,3 +1,8 @@
 /.idea
 /.DS_store
 /cache_write/*
+/tests/build/api
+/tests/build/code-browser
+/tests/build/coverage
+/tests/build/logs
+/tests/build/pdepend

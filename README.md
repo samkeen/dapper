@@ -14,6 +14,13 @@ The focus of this framework is on the syntax of the route matching in the front 
 
 ??
 
+## Laziness
+
+Do work only when you have to
+
+- Only the matched Route's work is analyzed
+- As soon as a route is matched, analysis of further routes stops
+
 ## initializer word
 - with
 - upon

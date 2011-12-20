@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="WOPR" default="build">
+ <target name="build"
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit,phpdoc,phpcb"/>
+
+  <property name="topdir"  value="${basedir}/.." />
+  <property name="testdir" value="${topdir}/tests" />
+  <property name="libdir"  value="${topdir}/lib" />
+
+
+ <target name="build-parallel"
+   depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
+
+ <target name="tools-parallel"
+         description="Run tools in parallel">
+  <parallel threadCount="2">
+   <sequential>
+    <antcall target="pdepend"/>
+    <antcall target="phpmd-ci"/>
+   </sequential>
+   <antcall target="phpcpd"/>
+   <antcall target="phpcs-ci"/>
+   <antcall target="phploc"/>
+  </parallel>
+ </target>
+
+ <target name="clean" description="Cleanup build artifacts">
+  <delete dir="${testdir}/build/api"/>
+  <delete dir="${testdir}/build/code-browser"/>
+  <delete dir="${testdir}/build/coverage"/>
+  <delete dir="${testdir}/build/logs"/>
+  <delete dir="${testdir}/build/pdepend"/>
+ </target>
+
+ <target name="prepare" depends="clean"
+         description="Prepare for build">
+  <mkdir dir="${testdir}/build/api"/>
+  <mkdir dir="${testdir}/build/code-browser"/>
+  <mkdir dir="${testdir}/build/coverage"/>
+  <mkdir dir="${testdir}/build/logs"/>
+  <mkdir dir="${testdir}/build/pdepend"/>
+ </target>
+
+ <target name="lint">
+  <apply executable="php" failonerror="true">
+   <arg value="-l" />
+
+   <fileset dir="${libdir}">
+    <include name="**/*.php" />
+   </fileset>
+
+   <fileset dir="${testdir}">
+    <include name="**/*.php" />
+   </fileset>
+  </apply>
+ </target>
+
+ <target name="phploc" description="Measure project size using PHPLOC">
+  <exec executable="phploc">
+   <arg value="--log-csv" />
+   <arg value="${testdir}/build/logs/phploc.csv" />
+   <arg path="${libdir}" />
+  </exec>
+ </target>
+
+ <target name="pdepend"
+         description="Calculate software metrics using PHP_Depend">
+  <exec executable="pdepend">
+   <arg value="--jdepend-xml=${testdir}/build/logs/jdepend.xml" />
+   <arg value="--jdepend-chart=${testdir}/build/pdepend/dependencies.svg" />
+   <arg value="--overview-pyramid=${testdir}/build/pdepend/overview-pyramid.svg" />
+   <arg path="${libdir}" />
+  </exec>
+ </target>
+
+ <target name="phpmd"
+         description="Perform project mess detection using PHPMD">
+  <exec executable="phpmd">
+   <arg path="${libdir}" />
+   <arg value="text" />
+   <arg value="${testdir}/build/phpmd.xml" />
+  </exec>
+ </target>
+
+ <target name="phpmd-ci"
+         description="Perform project mess detection using PHPMD">
+  <exec executable="phpmd">
+   <arg path="${libdir}" />
+   <arg value="xml" />
+   <arg value="${testdir}/build/phpmd.xml" />
+   <arg value="--reportfile" />
+   <arg value="${testdir}/build/logs/pmd.xml" />
+  </exec>
+ </target>
+
+ <target name="phpcs"
+         description="Find coding standard violations using PHP_CodeSniffer">
+  <exec executable="phpcs">
+   <arg value="--standard=${testdir}/build/phpcs.xml" />
+   <arg value="--ignore=autoload.php" />
+   <arg path="${libdir}" />
+  </exec>
+ </target>
+
+ <target name="phpcs-ci"
+         description="Find coding standard violations using PHP_CodeSniffer">
+  <exec executable="phpcs" output="/dev/null">
+   <arg value="--report=checkstyle" />
+   <arg value="--report-file=${testdir}/build/logs/checkstyle.xml" />
+   <arg value="--standard=${testdir}/build/phpcs.xml" />
+   <arg value="--ignore=autoload.php" />
+   <arg path="${libdir}" />
+  </exec>
+ </target>
+
+ <target name="phpcpd" description="Find duplicate code using PHPCPD">
+  <exec executable="phpcpd">
+   <arg value="--log-pmd" />
+   <arg value="${testdir}/build/logs/pmd-cpd.xml" />
+   <arg path="${libdir}" />
+  </exec>
+ </target>
+
+ <target name="phpunit" description="Run unit tests with PHPUnit">
+  <exec executable="phpunit" failonerror="true"/>
+ </target>
+
+ <target name="phpdoc" description="Generate API documentation using PHPDocumentor">
+  <exec executable="phpdoc">
+	<arg value="--directory" />
+	<arg path="${libdir}" />
+	<arg value="--ignore" />
+	<arg value="autoload.php" />
+	<arg value="--target" />
+	<arg path="${testdir}/build/api" />
+  </exec>
+ </target>
+	
+ <target name="phpcb"
+         description="Aggregate tool output with PHP_CodeBrowser">
+  <exec executable="phpcb">
+   <arg value="--log" />
+   <arg path="${testdir}/build/logs" />
+   <arg value="--source" />
+   <arg path="${libdir}" />
+   <arg value="--output" />
+   <arg path="${testdir}/build/code-browser" />
+  </exec>
+ </target>
+</project>

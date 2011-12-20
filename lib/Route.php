@@ -9,7 +9,7 @@ class Route {
 	private $http_method;
 	private $controller;
 	private $uri_path_segments;
-	private $targeted_view;
+	private $targeted_view_name;
 	private $exposed_work_var_names = array();
 	
 	/**
@@ -20,11 +20,16 @@ class Route {
 	private $work;
 	
 	private $known_http_methods = array('GET', 'PUT', 'POST', 'DELETE', 'OPTIONS');
-	
-	function __construct($http_method, $path)
+	/**
+	 * @param $http_method
+	 * @param $path
+	 * @param bool $is_requested_route If true, this is the route that the client
+	 * requested (as opposed to route patterns in index.php)
+	 */
+	function __construct($http_method, $path, $is_requested_route=false)
 	{
 		$this->set_http_method($http_method);
-		$disected_path = $this->disect_path($path);
+		$disected_path = $this->disect_path($path, $is_requested_route);
 		$this->path = $disected_path['path'];
 		$this->controller = $disected_path['controller'];
 		$this->uri_path_segments = $disected_path['uri_path_segments'];
@@ -50,10 +55,17 @@ class Route {
 	{
 		return func_num_args() ? $this->uri_path_segments = $uri_path_segments : $this->uri_path_segments;
 	}
-	
-	function targeted_view($targeted_view=null)
+	/**
+	 * [s|g]etter for the view name received from ->render()
+	 * 
+	 * @param string|null $targeted_view_name
+	 * @return string|null
+	 */
+	function view_name($targeted_view_name=null)
 	{
-		return func_num_args() ? $this->targeted_view = $targeted_view : $this->targeted_view;
+		return func_num_args() 
+			? $this->targeted_view_name = $targeted_view_name 
+			: $this->targeted_view_name;
 	}
 
 	/**
@@ -75,7 +87,7 @@ class Route {
 	function exposed_work_var_names($exposed_work_variable_names=null)
 	{
 		return func_num_args() 
-			? $this->exposed_work_var_names = $exposed_work_variable_names 
+			? $this->exposed_work_var_names = (array)$exposed_work_variable_names 
 			: $this->exposed_work_var_names;
 	}
 	
@@ -92,6 +104,8 @@ class Route {
 	
 	/**
 	 * @param string $raw_route ex: "/hello/:name"
+	 * @param boolean $is_requested_route If true, this is the route that the client
+	 * requested (as opposed to route patterns in index.php).
 	 * @return array ex: array(
 	 * 		'controller' => "hello",
 	 * 		'uri_path_sements' => array(
@@ -99,20 +113,24 @@ class Route {
 	 * 		)
 	 * )
 	 */
-	private function disect_path($raw_route)
+	private function disect_path($raw_route, $is_requested_route=false)
 	{
 		$uri_path_segments = array_filter(explode('/', trim($raw_route, '/')));
 		$controller = array_shift($uri_path_segments);
-		/*
-		 * only allow pattern /:\w+/ for uri path segments
-		 */
-		$uri_path_segments = array_values(array_filter(
-			$uri_path_segments,
-			function($element){
-				return $element[0]==':'
-					&& ! preg_match('/:.*\W+/', $element);
-			}
-		));
+		if( ! $is_requested_route)
+		{
+			/*
+			 * enforce placeholder pattern
+			 * ex: /users/:name
+			 */
+			$uri_path_segments = array_values(array_filter(
+				$uri_path_segments,
+				function($element){
+					return $element[0]==':'
+						&& ! preg_match('/:.*\W+/', $element);
+				}
+			));
+		}
 		$post_controller_path = $uri_path_segments 
 			? "/".implode('/',array_map('trim', $uri_path_segments)) 
 			: "";

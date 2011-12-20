@@ -1,7 +1,7 @@
 <?php
 namespace clear;
 
-require __DIR__ . "/Core.php";
+require_once __DIR__ . "/Core.php";
 
 spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
 

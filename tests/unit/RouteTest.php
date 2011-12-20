@@ -108,26 +108,32 @@ class RouteTest extends BaseUnitTestCase {
 		$this->assertSame($closure, $route->work()->closure());
     }
 
-    /**
-     * @todo Implement testTargeted_view().
-     */
-    public function testTargeted_view()
+    public function testViewNameSetterGetter()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		$route = new clear\Route('GET', '/user/id');
+		$route->view_name('speed');
+		$this->assertEquals('speed', $route->view_name());
     }
+	
+	public function testViewNameSetterGetterCaseSensitive()
+	{
+		$route = new clear\Route('GET', '/user/id');
+		$route->view_name('spEEd');
+		$this->assertEquals('spEEd', $route->view_name());
+	}
 
-    /**
-     * @todo Implement testExposed_work().
-     */
-    public function testExposed_work()
+    public function testExposedWorkVarNames()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+		$route = new clear\Route('GET', '/user/id');
+		$route->exposed_work_var_names(array('user', 'message'));
+		$this->assertEquals(array('user', 'message'), $route->exposed_work_var_names());
     }
+	
+	public function testExposedWorkVarNamesStringConvertsToArray()
+    {
+		$route = new clear\Route('GET', '/user/id');
+		$route->exposed_work_var_names('user');
+		$this->assertEquals(array('user'), $route->exposed_work_var_names());
+    }
+	
 }
-?>
