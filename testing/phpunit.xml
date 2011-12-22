@@ -21,10 +21,10 @@
 
 	<filter>	
 		<blacklist>
-			<directory suffix=".php">../tests</directory>
-			<file>../tests/BaseUnitTestCase.php</file>
+			<directory suffix=".php">../testing</directory>
+			<file>../testing/BaseUnitTestCase.php</file>
 			<exclude>
-				<directory suffix=".php">../tests</directory>
+				<directory suffix=".php">../testing</directory>
 			</exclude>
 		</blacklist>
 		<whitelist addUncoveredFilesFromWhitelist="true">

@@ -22,7 +22,7 @@ class Work {
 		 * and then invoke that with the suppyled $params
 		 */
 		$extracting_closure = new ExtractingClosure($this->closure);
-		$closure = $extracting_closure->invoke($param);
+		$closure = $extracting_closure->transform($param);
 		return $closure();
 	}
 	

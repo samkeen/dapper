@@ -5,7 +5,7 @@
    depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit,phpdoc,phpcb"/>
 
   <property name="topdir"  value="${basedir}/.." />
-  <property name="testdir" value="${topdir}/tests" />
+  <property name="testdir" value="${topdir}/testing" />
   <property name="libdir"  value="${topdir}/lib" />
 
 

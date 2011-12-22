@@ -4,7 +4,19 @@ namespace clear;
  * 
  */
 class ExtractingClosure {
-	
+    
+	/**
+     * Protect $this + the internal vars of ExtractingClosure::transform()
+     * 
+     * @var array
+     */
+    private $use_statement_name_blacklist = array(
+        'this',
+        '__closure_uses',
+        '__code',
+        '__closure'
+    );
+    
 	/**
 	 * This is the statement that is added to the Closure in order
 	 * to export its variables
@@ -12,6 +24,7 @@ class ExtractingClosure {
 	 * @var string
 	 */
 	private $extraction_statement = "return get_defined_vars()";
+    
 	/**
 	 * @var \Closure
 	 */
@@ -31,7 +44,7 @@ class ExtractingClosure {
 	 *  - use these lines of code to eval a new closure with
 	 *    use ($param) added.
 	 * 
-	 * @param array $closure_uses 
+	 * @param array $__closure_uses 
 	 * ex: array(
 	 *   'path' => array(
 	 *     ':name' => 'bob' 
@@ -44,43 +57,53 @@ class ExtractingClosure {
 	 * 
 	 * @return \Closure
 	 */
-	function invoke(array $closure_uses = null)
+	function transform(array $__closure_uses = null)
 	{
-		// bring paramd into this namespace
-		extract($closure_uses);
+        $__closure_uses = (array)$__closure_uses;
+        $this->check_dissalowed_keywords($__closure_uses);
+        $this->assert_valid_var_names($__closure_uses);
+		// bring params into this namespace
+	    extract($__closure_uses);
 		// construct the use() statement to expose these params to the new closure 
-		$use_statement = $this->closure_use_statement(array_keys($closure_uses));
-		$closure_append = "\n".trim($this->extraction_statement,"\n; ").";\n";
-		
-		$reflection_work = new \ReflectionFunction($this->initial_closure);
-		$file = new \SplFileObject($reflection_work->getFileName());
-		$file->seek($reflection_work->getStartLine()-1);
-		$code = '';
-		while ($file->key() < $reflection_work->getEndLine())
-		{
-			$code .= $file->current();
-			$file->next();
-		}
-		$begin = strpos($code, 'function');
-		$end = strrpos($code, '}');
-		$code = substr($code, $begin, $end - $begin + 1);
-		
-		$code = $this->replace_constants($code, dirname($file->getRealPath()));
-		
-		$code = preg_replace('/(return.*;)/','//$1',$code);
-		$code = preg_replace('/(})$/',$closure_append.'$1',$code);
-		
-		$closure = null;
-		$code = str_replace('function()','function() '.$use_statement, $code);
-		eval('namespace '.__NAMESPACE__.'; $closure = '.$code.';');
-		return $closure;
+		$__code = $this->build_closure_code_string($__closure_uses);
+		$__closure = null;
+		eval('namespace '.__NAMESPACE__.'; $__closure = '.$__code.';');
+		return $__closure;
 	}
+    
+    private function build_closure_code_string($closure_uses)
+    {
+        $use_statement = $this->closure_use_statement(array_keys($closure_uses));
+        $closure_append = "\n".trim($this->extraction_statement,"\n; ").";\n";
+        $reflection_work = new \ReflectionFunction($this->initial_closure);
+        $file = new \SplFileObject($reflection_work->getFileName());
+        $file->seek($reflection_work->getStartLine()-1);
+        $code = '';
+        while ($file->key() < $reflection_work->getEndLine())
+        {
+            $code .= $file->current();
+            $file->next();
+        }
+        $begin = strpos($code, 'function');
+        $end = strrpos($code, '}');
+        $code = substr($code, $begin, $end - $begin + 1);
+        $code = $this->replace_constants($code, dirname($file->getRealPath()));
+        $code = preg_replace('/(return.*;)/','//$1',$code);
+        $code = preg_replace('/(})$/',$closure_append.'$1',$code);
+        $code = str_replace('function()','function() '.$use_statement, $code);
+        return $code;
+    }
 	
-	private function closure_use_statement($uses)
+	private function closure_use_statement(array $uses=null)
 	{
-		return "use (".implode(", ", array_map(
-			function($val){return "\${$val}";},
-			$uses)).")";
+        $use_statement = '';
+        if($uses)
+        {
+            $use_statement = "use (".implode(", ", array_map(
+                function($val){return "\${$val}";},
+                $uses)).")";
+        }
+		return $use_statement;
 	}
 	
 	/**
@@ -93,4 +116,40 @@ class ExtractingClosure {
 		$code = str_replace('__DIR__',"'{$path_to_code_file}'", $code);
 		return $code;
 	}
+    /**
+     * When writing the new Closure, this will dissalow things like
+     * "function use($this) {" <-putting $this in use() would be bad
+     * 
+     * @param $use_var_scope
+     * @throws \InvalidArgumentException
+     */
+    private function check_dissalowed_keywords($use_var_scope)
+    {
+        $intersected_dissalowed_names = array_intersect_key(
+            array_fill_keys($this->use_statement_name_blacklist, null),
+            $use_var_scope
+        );
+        if($intersected_dissalowed_names)
+        {
+            throw new \InvalidArgumentException("The use scope names ["
+            .implode(',', array_keys($intersected_dissalowed_names))."] are dissalowed\n"
+            ."'use scope names' are the var names that will go into the closure use() statment");
+        }
+    }
+    /**
+     * @param $use_var_scope
+     * @throws \InvalidArgumentException
+     */
+    private function assert_valid_var_names($use_var_scope)
+    {
+        foreach($use_var_scope as $var_name => $var_value)
+        {
+            if( ! preg_match('/^[a-z_]([\w]+)?$/i', $var_name))
+            {
+                throw new \InvalidArgumentException("use scope names must be valid PHP "
+                ."var names.  [{$var_name}] is not a valid name\n"
+                ."'use scope names' are the var names that will go into the closure use() statment");
+            }
+        }
+    }
 }
