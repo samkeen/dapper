@@ -1,9 +1,12 @@
 <?php
+/**
+ * @package clear
+ */
 namespace clear;
 
 /**
  * 
- * 
+ * @package clear
  */
 class Core {
 	
@@ -109,7 +112,7 @@ class Core {
 	 */
 	
 	/**
-	 * autoloader for the entire app
+	 * auto loader for the entire app
 	 * 
 	 * @param string $class
 	 * @return bool
@@ -145,6 +148,29 @@ class Core {
 		);
 		return $this;
 	}
+    
+    /**
+     * For the given request URI look for a matched route defined in 
+     * index.php.  If found, render it.
+     * 
+     * @return void
+     */
+    function render_route()
+    {
+        if($route = $this->match_route())
+        {
+            $this->render_view($route);
+        }
+        else
+        {
+            echo "<pre>\n";
+            echo "Requested Route [{$this->requested_route->http_method()} {$this->requested_route->path()}] not found\n";
+            echo "Known Routes:\n";
+            echo print_r($this->routes, true);
+            echo "\n</pre>";
+        }
+    }
+    
 	/**
 	 * This extracts a 'payload' from the Route for the matched Route
 	 * The 'payload' is a set scope of variables retrieved when invoking
@@ -157,7 +183,7 @@ class Core {
 	 * @param Route $route
 	 * @throws \Exception
 	 */
-	function render_view(Route $route)
+	private function render_view(Route $route)
 	{
 		$template_payload = array();
 		if($route_work = $route->work())
@@ -204,27 +230,6 @@ class Core {
 			new \Twig_Loader_Filesystem($this->config['template_dir']),
 			$this->config['template_env']
 		);
-	}
-	/**
-	 * For the given request URI look for a matched route defined in 
-	 * index.php.  If found, render it.
-	 * 
-	 * @return void
-	 */
-	function render_route()
-	{
-		if($route = $this->match_route())
-		{
-			$this->render_view($route);
-		}
-		else
-		{
-			echo "<pre>\n";
-			echo "Requested Route [{$this->requested_route->http_method()} {$this->requested_route->path()}] not found\n";
-			echo "Known Routes:\n";
-			echo print_r($this->routes, true);
-			echo "\n</pre>";
-		}
 	}
 	
 	/**

@@ -1,7 +1,5 @@
 <?php
-
 namespace clear;
-
 require_once __DIR__ . "/../BaseUnitTestCase.php";
 
 /**

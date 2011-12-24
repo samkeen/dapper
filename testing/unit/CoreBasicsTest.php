@@ -1,18 +1,24 @@
 <?php
+namespace clear;
 require_once __DIR__ . "/../BaseUnitTestCase.php";
 
-class CoreBasicsTest extends BaseUnitTestCase {
+class CoreBasicsTest extends \BaseUnitTestCase {
 	
 	/**
-	 * @var clear\Core
+	 * @var Core
 	 */
 	private $core;
 	
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new clear\Core('GET', array());
+		$this->core = new Core('GET', array());
 	}
+    
+    function testInstantiateThrowsNoErrors()
+    {
+        new Core('GET', array());
+    }
 		
 	/**
      * @expectedException clear\Exception\InvalidStateException

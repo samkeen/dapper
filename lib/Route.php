@@ -1,7 +1,12 @@
 <?php
+/**
+ * @package clear
+ */
 namespace clear;
 /**
  * Abstract Of a Route (that can optionally have Work to do)
+ * 
+ * @package clear
  */
 class Route {
 

@@ -1,15 +1,16 @@
 <?php
+/**
+ * @package clear
+ */
 namespace clear;
-
 require_once __DIR__ . "/Core.php";
-
 spl_autoload_register(__NAMESPACE__ .'\Core::autoload');
 
 /**
  * index.php method
  * 
- * Single global function.  Gets to initial refernce to the
- * Core manages it as a Singleton.  Then proxies calls of Core::append_route()
+ * Single global function.  Gets initial reference to the
+ * Core and manages it as a Singleton.  Then proxies calls of Core::append_route()
  * Also registers Core::render_route() and the PHP engine 
  * shutdown function
  * 

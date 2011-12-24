@@ -1,7 +1,11 @@
 <?php
+/**
+ * @package clear
+ */
 namespace clear;
 /**
  * 
+ * @package clear
  */
 class ExtractingClosure {
     

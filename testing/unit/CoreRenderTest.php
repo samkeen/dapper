@@ -1,7 +1,8 @@
 <?php
+namespace clear;
 require_once __DIR__ . "/../BaseUnitTestCase.php";
 
-class CoreRenderTest extends BaseUnitTestCase {
+class CoreRenderTest extends \BaseUnitTestCase {
 	
 	/**
 	 * @var clear\Core
@@ -11,7 +12,7 @@ class CoreRenderTest extends BaseUnitTestCase {
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new clear\Core('GET', array());
+		$this->core = new Core('GET', array());
 	}
 		
 	/**
