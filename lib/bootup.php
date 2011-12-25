@@ -3,8 +3,8 @@
  * @package clear
  */
 namespace clear;
-require_once __DIR__ . "/Router.php";
-spl_autoload_register(__NAMESPACE__ .'\Router::autoload');
+require_once __DIR__ . "/Env.php";
+spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
 
 /**
  * index.php method

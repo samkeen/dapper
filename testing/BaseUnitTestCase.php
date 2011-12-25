@@ -2,8 +2,8 @@
 /**
  * 
  */
-require __DIR__ . "/../lib/Router.php";
-spl_autoload_register('clear\Router::autoload');
+require __DIR__ . "/../lib/Env.php";
+spl_autoload_register('clear\Env::autoload');
 
 class BaseUnitTestCase extends \PHPUnit_Framework_TestCase {
 		

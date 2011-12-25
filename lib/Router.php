@@ -111,18 +111,7 @@ class Router {
 	 * internals meant for Router and bootup.php
 	 */
 	
-	/**
-	 * auto loader for the entire app
-	 * 
-	 * @param string $class
-	 * @return bool
-	 */
-	static function autoload($class)
-	{
-		$class = str_replace('\\', '/', $class) . '.php';
-		if( ! strstr($class, __NAMESPACE__)) {return false;}
-    	require(str_replace(__NAMESPACE__.'/','',$class));
-	}
+	
 	
 	/**
 	 * 
