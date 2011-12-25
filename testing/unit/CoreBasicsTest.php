@@ -5,19 +5,19 @@ require_once __DIR__ . "/../BaseUnitTestCase.php";
 class CoreBasicsTest extends \BaseUnitTestCase {
 	
 	/**
-	 * @var Core
+	 * @var Router
 	 */
 	private $core;
 	
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new Core('GET', array());
+		$this->core = new Router('GET', array());
 	}
     
     function testInstantiateThrowsNoErrors()
     {
-        new Core('GET', array());
+        new Router('GET', array());
     }
 		
 	/**

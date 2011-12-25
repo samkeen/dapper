@@ -8,7 +8,7 @@ Utilizing a Fluent Interface
 
 ## Template Support 
 
-* templateless
+* template-less
 * plain old php
 * twig
 
@@ -146,11 +146,20 @@ for_('GET /')
   ->to_view('hello');
 ```
 
+```php
+with("GET /user")
+    ->perform()
+    ->exposing('user, message')
+    ->using('simple.htm');
+```
+
 ## Examples
 
-simplist
+<pre>
+simplest
  |
  |
  |
 \./
 complex
+</pre>

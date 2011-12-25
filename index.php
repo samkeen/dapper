@@ -13,4 +13,3 @@ with("GET /hello/:name")
 	})
 	->expose('message')
 	->render('hello');
-

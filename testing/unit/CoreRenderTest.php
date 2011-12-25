@@ -12,7 +12,7 @@ class CoreRenderTest extends \BaseUnitTestCase {
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new Core('GET', array());
+		$this->core = new Router('GET', array());
 	}
 		
 	/**

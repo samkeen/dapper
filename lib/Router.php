@@ -8,7 +8,7 @@ namespace clear;
  * 
  * @package clear
  */
-class Core {
+class Router {
 	
 	/**
 	 * the name used to expose path elements to the do_work
@@ -54,14 +54,14 @@ class Core {
 	/*
 	 * doWork, expose, and render are considered the 'public api'
 	 * meant for index.php.
-	 * All other methods are meant for use from Core
+	 * All other methods are meant for use from Router
 	 */
 	
 	/**
 	 * index.php method
 	 * 
 	 * @param \Closure $work
-	 * @return Core
+	 * @return Router
 	 */
 	function do_work(\Closure $work)
 	{
@@ -73,7 +73,7 @@ class Core {
 	 * index.php method
 	 * 
 	 * @param $name_to_expose_to_view
-	 * @return Core
+	 * @return Router
 	 */
 	function expose($name_to_expose_to_view)
 	{
@@ -92,7 +92,7 @@ class Core {
 	 * index.php method
 	 * 
 	 * @param $view_name
-	 * @return Core
+	 * @return Router
 	 */
 	function render($view_name)
 	{
@@ -108,7 +108,7 @@ class Core {
 	
 	/*
 	 * All the following methods are not meant to be used in index.php.  They are
-	 * internals meant for Core and bootup.php
+	 * internals meant for Router and bootup.php
 	 */
 	
 	/**
@@ -127,7 +127,7 @@ class Core {
 	/**
 	 * 
 	 * @param string $route 
-	 * @return Core
+	 * @return Router
 	 */
 	function append_route($route)
 	{
