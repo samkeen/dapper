@@ -63,13 +63,13 @@ class RouteTest extends \BaseUnitTestCase {
 	public function testProperController()
 	{
 		$route = new Route('GET', '/user'	);
-		$this->assertEquals('user', $route->controller());
+		$this->assertEquals('user', $route->controller_name());
 	}
 	
 	public function testProperControllerCaseNormalized()
 	{
 		$route = new Route('GET', '/usEr'	);
-		$this->assertEquals('user', $route->controller());
+		$this->assertEquals('user', $route->controller_name());
 	}
 
     public function testProperUriPathSegments()

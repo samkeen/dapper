@@ -19,37 +19,39 @@ spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
  */
 function with($route)
 {
-	static $instance;
-	if( ! $instance)
+	static $router_instance;
+	if( ! $router_instance)
 	{
-		/*
-		 * default template_engine is plain old php ("php"), to use twig, make
-		 * this call
-		 * Router::config('template_engine', "twig");
-		 */
-		$config['template_engine'] = "twig";
-		/*
-		 * twig requires a env config array
-		 */
-		$config['template_env'] = array(
-			'cache' 			=> TOP_DIR."/cache_write/twig_cache",
-			'auto_reload' 		=> true,
-			'debug'				=> true,
-			'strict_variables'	=> true,
-			'autoescape'		=> true,
-		);
-		$config['template_dir'] = TOP_DIR."/templates";
-		$config['cache_dir'] = TOP_DIR."/cache_write";
-		$instance = new Router($_SERVER['REQUEST_METHOD'], $config);
+		$router_instance = new Router($_SERVER['REQUEST_METHOD']);
 		register_shutdown_function(
 			/**
 			 * this is where we will invoke the matched route
 			 */
-			function() use($instance)
+			function() use($router_instance)
 			{
-				$instance->render_route();
+                /*
+                 * default template_engine is plain old php ("php"), to use twig, make
+                 * this call
+                 * Router::config('template_engine', "twig");
+                 */
+                $config['template_engine'] = "twig";
+                /*
+                 * twig requires a env config array
+                 */
+                $config['template_env'] = array(
+                    'cache' 			=> TOP_DIR."/cache_write/twig_cache",
+                    'auto_reload' 		=> true,
+                    'debug'				=> true,
+                    'strict_variables'	=> true,
+                    'autoescape'		=> true,
+                );
+                $config['template_dir'] = TOP_DIR."/templates";
+                $config['cache_dir'] = TOP_DIR."/cache_write";
+                $responder = new Responder($config);
+                $responder->render_route($router_instance->match_route());
+//                $router_instance->render_route();
 			}
 		);
 	}
-	return $instance->append_route($route);
+	return $router_instance->append_route($route);
 }

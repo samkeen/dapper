@@ -5,7 +5,9 @@
 namespace clear;
 
 /**
- * Abstract Work (that a route can have performed on its behalf)
+ * Work (that a route can have performed on its behalf)
+ * Behaves as a closure (__invoke) but when called it is 
+ * it is transformed into an ExtractingClosure and then invoked.
  * 
  * @package clear
  */
