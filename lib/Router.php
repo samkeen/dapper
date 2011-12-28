@@ -167,6 +167,40 @@ class Router {
 		}
 		return $matched_route;
 	}
+    /**
+     * This utility method extracts a 'payload' from the Route for the matched Route
+     * The 'payload' is a set scope of variables retrieved when invoking
+     * the Route's ExtractingClosure.
+     * This variable scope is intersected with the whitelist defined by ->exposse() 
+     * for the the given $route.
+     * 
+     * @param Route $route
+     * @return array
+     */
+    function extract_payload(Route $route)
+    {
+        $template_payload = array();
+        if($route_work = $route->work())
+        {
+            $template_payload = array_intersect_key(
+                /*
+                 * the param used when executing the Extracting closure signifies
+                 * the variable scope that will be used (use()) for the ultimate
+                 * execution of the closure.
+                 */
+                $route_work(array(
+                    Self::URI_PATH_KEY_NAME => $route->mapped_path_param_values())
+                ),
+                /*
+                 * an ExtractionClosre retuns all of its internal var scope as a key/val
+                 * array. Of that array, $route->exposed_work_var_names() is a white list of keys 
+                 * that determines what will be exposed to the view tier ($template_payload)
+                 */
+                array_fill_keys($route->exposed_work_var_names(), null)
+            );
+        }
+        return $template_payload;
+    }
 	
 	/**
      * note: Left public for testing purposes.
