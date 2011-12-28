@@ -11,7 +11,7 @@ spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
  * 
  * Single global function.  Gets initial reference to the
  * Router and manages it as a Singleton.  Then proxies calls of Router::append_route()
- * Also registers Router::render_route() and the PHP engine 
+ * Also registers Router::render() and the PHP engine 
  * shutdown function
  * 
  * @param string $route ex: "Get /hello/:name"  
@@ -47,9 +47,8 @@ function with($route)
                 );
                 $config['template_dir'] = TOP_DIR."/templates";
                 $config['cache_dir'] = TOP_DIR."/cache_write";
-                $responder = new Responder($config);
-                $responder->render_route($router_instance->match_route());
-//                $router_instance->render_route();
+                $responder = new Responder($config, $router_instance);
+                $responder->render();
 			}
 		);
 	}

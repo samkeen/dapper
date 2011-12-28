@@ -127,6 +127,20 @@ class Router {
 		);
 		return $this;
 	}
+    /**
+     * @return Route
+     */
+    function requested_route()
+    {
+        return $this->requested_route;
+    }
+    /**
+     * @return array
+     */
+    function learned_routes()
+    {
+        return $this->learned_routes;
+    }
 	
 	/**
 	 * 

@@ -21,7 +21,13 @@ namespace clear;
  */
 class Responder
 {
-    
+    /**
+     * @var \clear\Router
+     */
+    private $router;
+    /**
+     * @var array
+     */
     private $config = array(
    		'template_engine' => 'php',
    		'template_env' => array(),
@@ -29,7 +35,7 @@ class Responder
    		'cache_dir' => null
    	);
         
-    function __construct($config)
+    function __construct($config, Router $router)
     {
         $this->config = array_merge($this->config, $config);
         if($this->config['template_engine']=="twig")
@@ -37,6 +43,7 @@ class Responder
             require_once TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php';
             \Twig_Autoloader::register();
         }
+        $this->router = $router;
     }
     
     function init()
@@ -48,27 +55,24 @@ class Responder
     {
         
     }
-    
-    function render()
-    {
-        
-    }
+
     
     /**
-     * @param Route|null $route
+     * 
      */
-    function render_route(Route $route = null)
+    function render()
     {
-        if($route)
+        if($route = $this->router->match_route())
         {
             $this->render_view($route);
         }
         else
         {
+            $requested_route = $this->router->requested_route();
             echo "<pre>\n";
-            echo "Requested Route [{$this->requested_route->http_method()} {$this->requested_route->path()}] not found\n";
+            echo "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
             echo "Known Routes:\n";
-            echo print_r($this->routes, true);
+            echo print_r($this->router->learned_routes(), true);
             echo "\n</pre>";
         }
     }
