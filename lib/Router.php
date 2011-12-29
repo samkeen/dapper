@@ -31,16 +31,17 @@ class Router {
 	 * @var Route
 	 */
 	private $requested_route;
+    /**
+     * @var array
+     */
+    private $known_http_methods = array('GET', 'PUT', 'POST', 'DELETE', 'OPTIONS');
 	
 	/**
-	 * @param string $request_method
-	 */
-	function __construct($request_method)
+     * @param Route $request_route
+     */
+	function __construct(Route $request_route)
 	{
-		$this->requested_route = new Route(
-			$request_method, strtolower(trim(filter_input(INPUT_GET, '_c'))),
-			$is_request_route = true
-		);
+		$this->requested_route = $request_route;
 	}
 	
 	/*
@@ -122,6 +123,11 @@ class Router {
 			 ."followed by a {URI path segment}\nex: 'GET /user'");
 		}
 		$http_method = $match['method'];
+        if( ! in_array($http_method, $this->known_http_methods))
+        {
+            throw new \InvalidArgumentException("Unknown HTTP Method [{$http_method}].\n"
+                ."Known methods [".implode(', ', $this->known_http_methods)."]");
+        }
 		$this->learned_routes[$route] = new Route(
 			$http_method, $match['path']
 		);

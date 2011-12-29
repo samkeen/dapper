@@ -22,8 +22,8 @@
 	<filter>	
 		<blacklist>
 			<directory suffix=".php">../testing</directory>
-			<file>../testing/BaseUnitTestCase.php</file>
-			<exclude>
+			<file>../testing/BaseCase.php</file>
+            <exclude>
 				<directory suffix=".php">../testing</directory>
 			</exclude>
 		</blacklist>

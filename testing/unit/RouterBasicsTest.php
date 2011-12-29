@@ -1,23 +1,32 @@
 <?php
 namespace clear;
-require_once __DIR__ . "/../BaseUnitTestCase.php";
+require_once __DIR__ . "/../BaseCase.php";
 
-class CoreBasicsTest extends \BaseUnitTestCase {
+class RouterBasicsTest extends \BaseCase {
 	
 	/**
 	 * @var Router
 	 */
-	private $core;
+	private $router;
 	
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->core = new Router('GET', array());
+		$this->router = new Router(
+            new Route(
+                "get",
+                '/',
+                $is_request_route=true
+            )
+        );
 	}
     
-    function testInstantiateThrowsNoErrors()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    function testAppendRouteThrowsProperExceptionForInvalidHttpMethod()
     {
-        new Router('GET', array());
+        $this->router->append_route('FU /');		
     }
 		
 	/**
@@ -25,7 +34,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testDo_workInvalidStateExceptionThrown()
     {
-		$this->core
+		$this->router
 			->do_work(function(){});
     }
 	
@@ -33,12 +42,12 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	{
 		$other_work = function(){$x=1;};
 		$work_for_last_route = function(){};
-		$this->core
+		$this->router
 			->append_route('GET /123')
 			->do_work($other_work)
 			->append_route('GET /abc')
 			->do_work($work_for_last_route);
-		$initial_workload = $this->core->last_learned_route()->work()->closure();
+		$initial_workload = $this->router->last_learned_route()->work()->closure();
 		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $this->core->do_work($work)'
 			.' should be the same work returned by $this->core->last_learned_route()->work()->closure()');
 	}
@@ -48,7 +57,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testBlindCallToExpose()
     {
-		$this->core
+		$this->router
 			->expose('bob');
     }
 	
@@ -56,12 +65,12 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	{
 		$other_expose_params = "message";
 		$expose_params_for_last_route = "user";
-		$this->core
+		$this->router
 			->append_route('GET /123')
 			->expose($other_expose_params)
 			->append_route('GET /abc')
 			->expose($expose_params_for_last_route);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array('user'), 'The returned work to expose'
 		 .' should have been an array with one element: array("user")');
 	}
@@ -69,20 +78,20 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	function testExposeEmptyStringReturnsEmptyArray()
 	{
 		$work_to_expose = "";
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
 	function testExposeNullReturnsEmptyArray()
 	{
 		$work_to_expose = null;
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array(), 'The returned work to expose'
 		 .' should have been an empty array:  array()');
 	}
@@ -90,10 +99,10 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	function testExposeCommaDelimListReturnsPoperArray()
 	{
 		$work_to_expose = "user, message";
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -102,10 +111,10 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	function testExposeSpaceDelimListReturnsPoperArray()
 	{
 		$work_to_expose = "user   message";
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -114,10 +123,10 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	function testExposeTooManyCommasReturnsPoperArray()
 	{
 		$work_to_expose = "user, ,message,";
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->expose($work_to_expose);
-		$exposed_work = $this->core->last_learned_route()->exposed_work_var_names();
+		$exposed_work = $this->router->last_learned_route()->exposed_work_var_names();
 		$this->assertEquals($exposed_work, array("user", "message"),
 			'The returned work to expose'
 			.' should have been an empty array:  array("user", "message")');
@@ -128,7 +137,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testBlindCallToRenderThrowsException()
     {
-		$this->core
+		$this->router
 			->render('bob');
     }
 	
@@ -137,19 +146,19 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	 */
 	function testEmptyCallToRenderThrowsException()
 	{
-		$this->core
+		$this->router
 			->append_route('GET /abc')
 			->render('');
 	}
 	
 	function testRenderViewLandsOnLastRoute()
 	{
-		$this->core
+		$this->router
 			->append_route('GET /ted')
 			->render('ted')
 			->append_route('GET /bob')
 			->render('bob');
-		$this->assertEquals('bob', $this->core->last_learned_route()->view_name());
+		$this->assertEquals('bob', $this->router->last_learned_route()->view_name());
 	}
 
 
@@ -158,7 +167,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testAppendRouteThrowExceptionForUnknowHttpMethod()
     {
-        $this->core
+        $this->router
 			->append_route('FU /');
     }
 	/**
@@ -166,7 +175,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testAppendRouteThrowExceptionForMissingPath()
     {
-        $this->core
+        $this->router
 			->append_route('GET');
     }
 	/**
@@ -174,13 +183,13 @@ class CoreBasicsTest extends \BaseUnitTestCase {
      */
     function testAppendRouteThrowExceptionForMissingHttpMethod()
     {
-        $this->core
+        $this->router
 			->append_route('/user');
     }
 
     function testAppendRouteHttpMethodAndPathProperlyParsed()
     {
-        $last_route = $this->core
+        $last_route = $this->router
 			->append_route('GET /user')
 			->last_learned_route();
 		$this->assertEquals('GET', $last_route->http_method(),"The last route should be"
@@ -193,7 +202,7 @@ class CoreBasicsTest extends \BaseUnitTestCase {
 	
 	function testAppendRoutePathSegemntsProperlyParsed()
 	{
-		$last_route = $this->core
+		$last_route = $this->router
 			->append_route('GET /user/:id/:location')
 			->last_learned_route();
 		$this->assertEquals(array(':id', ':location'), $last_route->uri_path_segments(),

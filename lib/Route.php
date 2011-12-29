@@ -36,7 +36,7 @@ class Route {
     /**
      * @todo Move to Router
      */
-	private $known_http_methods = array('GET', 'PUT', 'POST', 'DELETE', 'OPTIONS');
+	
 	/**
 	 * @param $http_method
 	 * @param $path
@@ -45,7 +45,7 @@ class Route {
 	 */
 	function __construct($http_method, $path, $is_requested_route=false)
 	{
-		$this->set_http_method($http_method);
+        $this->http_method = strtoupper(trim($http_method));
 		$disected_path = $this->disect_path($path, $is_requested_route);
 		$this->path = $disected_path['path'];
 		$this->controller_name = $disected_path['controller_name'];
@@ -141,17 +141,6 @@ class Route {
             ? $this->mapped_path_param_values = (array)$mapped_path_param_values 
             : $this->mapped_path_param_values;
     }
-	
-	private function set_http_method($http_method)
-	{
-		$http_method = strtoupper(trim($http_method));
-		if( ! in_array($http_method, $this->known_http_methods))
-		{
-			throw new \InvalidArgumentException("Unknown HTTP Method [{$http_method}].\n"
-				."Known methods [".implode(', ', $this->known_http_methods)."]");
-		}
-		$this->http_method = $http_method;
-	}
 	
 	/**
 	 * @param string $raw_route ex: "/hello/:name"

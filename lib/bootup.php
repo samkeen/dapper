@@ -22,7 +22,13 @@ function with($route)
 	static $router_instance;
 	if( ! $router_instance)
 	{
-		$router_instance = new Router($_SERVER['REQUEST_METHOD']);
+		$router_instance = new Router(
+            new Route(
+                $_SERVER['REQUEST_METHOD'],
+                strtolower(trim(filter_input(INPUT_GET, '_c'))),
+                $is_request_route = true
+            )
+        );
 		register_shutdown_function(
 			/**
 			 * this is where we will invoke the matched route

@@ -1,12 +1,14 @@
 <?php
 namespace clear;
-require_once __DIR__ . "/../BaseUnitTestCase.php";
+require_once __DIR__ . "/../BaseCase.php";
 
-class WorkTest extends \BaseUnitTestCase {
+class WorkTest extends \BaseCase {
 	
 	function testInstantiateNoErrors()
     {
         new Work(function(){});
+        // Success, no errors
+        $this->assertTrue(true);
     }
     
     function testClosureMethodReturnsClosureFromConstructor()
