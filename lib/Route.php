@@ -113,7 +113,10 @@ class Route {
 			return $this->work;
 		}
 	}
-	
+	/**
+     * @param array|null $exposed_work_variable_names
+     * @return array
+     */
 	function exposed_work_var_names($exposed_work_variable_names=null)
 	{
 		return func_num_args() 

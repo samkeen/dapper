@@ -2,7 +2,7 @@
 namespace clear;
 require_once __DIR__ . "/../BaseCase.php";
 
-class RouterBasicsTest extends \BaseCase {
+class RouterTest extends \BaseCase {
 	
 	/**
 	 * @var Router
@@ -15,7 +15,7 @@ class RouterBasicsTest extends \BaseCase {
 		$this->router = new Router(
             new Route(
                 "get",
-                '/',
+                '/user',
                 $is_request_route=true
             )
         );
@@ -210,8 +210,162 @@ class RouterBasicsTest extends \BaseCase {
 			. " the one defined by ->append_route() so its uri_path_segments should be "
 			. " array(':id', ':location')");
 	}
+    
+    function testRequestedRouteReturnsRouteFromCintructor()
+    {
+        $requested_route = $this->router->requested_route();
+        $this->assertEquals('GET',$requested_route->http_method());
+        $this->assertEquals('user',$requested_route->controller_name());
+    }
+    
+    function testLearnedRoutesReturnsAllLearnedRoutes()
+    {
+        $this->router
+            ->append_route('get /user')
+            ->append_route('post /messages');
+        $learned_routes = $this->router->learned_routes();
+        $this->assertEquals(2, count($learned_routes));
+        
+        $first_learned_route = $learned_routes[0];
+        $second_learned_route = $learned_routes[1];
+        
+        $this->assertEquals('GET',$first_learned_route->http_method());
+        $this->assertEquals('user',$first_learned_route->controller_name());
+        $this->assertEquals('POST',$second_learned_route->http_method());
+        $this->assertEquals('messages',$second_learned_route->controller_name());
+        
+    }
+    
+    function testMatchRouteReturnsNullForNoMatch()
+    {
+        $this->router
+            ->append_route('get /posts')
+            ->append_route('post /messages');
+        $this->assertNull($this->router->match_route());
+    }
+    
+    function testMatchRouteReturnsTheCorrectRoute()
+    {
+        $this->router
+            ->append_route('get /user')
+            ->append_route('post /messages');
+        $matched_route = $this->router->match_route();
+        $this->assertEquals('GET',$matched_route->http_method());
+        $this->assertEquals('user',$matched_route->controller_name());
+    }
+    
+    function testMatchRouteExtraPathStillMatches()
+    {
+        $this->router
+            ->append_route('get /user/bob')//<-- /bob "extra path"
+            ->append_route('post /messages');
+        $matched_route = $this->router->match_route();
+        $this->assertEquals('GET',$matched_route->http_method());
+        $this->assertEquals('user',$matched_route->controller_name());
+    }
 	
-	
+    function testExtractPayloadReturnsEmptyArrayForRouteWithNoWork()
+    {
+        $payload = $this->router->extract_payload(
+            new Route(
+                'get',
+                '/'
+            )
+        );
+        $this->assertEquals(array(), $payload);
+    }
+    
+    function testExtractPayloadReturnsEmptyArrayNoWorkExposedForRoute()
+    {
+        
+        $route = new Route('get', '/');
+        $route->work(function(){$x = 'Hello';});
+        $payload = $this->router->extract_payload(
+            $route
+        );
+        $this->assertEquals(array(), $payload);
+    }
+    
+	function testExtractPayloadReturnsProperArrayForExposedWorkOfRoute()
+    {
+        
+        $route = new Route('get', '/');
+        $route->work(function(){$x = 'Hello';});
+        $route->exposed_work_var_names('x');
+        $payload = $this->router->extract_payload(
+            $route
+        );
+        $this->assertEquals(array('x'=>'Hello'), $payload);
+    }
+    function testExtractPayloadNonExposedVarsAreNotReturned()
+    {
+        
+        $route = new Route('get', '/');
+        $route->work(function(){
+            $x = 'Hello';
+            $y = 'World';
+        });
+        $route->exposed_work_var_names('x');
+        $payload = $this->router->extract_payload(
+            $route
+        );
+        $this->assertArrayNotHasKey('y', $payload);
+    }
+    
+    
+    function testRequestPathParamsReturnsEmptyArrayIfNoParamsSignified()
+    {
+        $router = new Router(
+            new Route(
+                "get",
+                '/user/42',
+                $is_request_route=true
+            )
+        );
+        $router->append_route('get /user');//<-- no path params (i.e. /:id)
+        $matched_route = $router->match_route();
+        $this->assertEquals(array(), $matched_route->mapped_path_param_values());
+    }
+    function testRequestSinglePathParamReturnsProperParams()
+    {
+        $router = new Router(
+            new Route(
+                "get",
+                '/user/42',
+                $is_request_route=true
+            )
+        );
+        $router->append_route('get /user/:id');
+        $matched_route = $router->match_route();
+        $this->assertEquals(array(':id' => 42), $matched_route->mapped_path_param_values());
+    }
+    function testRequestMultiplePathParamsReturnsProperParams()
+    {
+        $router = new Router(
+            new Route(
+                "get",
+                '/user/42/simple',
+                $is_request_route=true
+            )
+        );
+        $router->append_route('get /user/:id/:style');
+        $matched_route = $router->match_route();
+        $this->assertEquals(array(':id' => 42, ':style' => 'simple'), $matched_route->mapped_path_param_values());
+    }
+    
+    function testRequestMultiplePathParamsReturnsNullValueForParamsNotSuppliedInRequest()
+    {
+        $router = new Router(
+            new Route(
+                "get",
+                '/user/42',
+                $is_request_route=true
+            )
+        );
+        $router->append_route('get /user/:id/:style');
+        $matched_route = $router->match_route();
+        $this->assertEquals(array(':id' => 42, ':style' => null), $matched_route->mapped_path_param_values());
+    }
 	
 	
 }

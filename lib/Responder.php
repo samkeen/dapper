@@ -65,7 +65,7 @@ class Responder
         if($route = $this->router->match_route())
         {
             $view_name = $route->view_name();
-            $template_payload = $this->router_extract_payload($route);
+            $template_payload = $this->router->extract_payload($route);
             $this->render_view($view_name, $template_payload);
         }
         else

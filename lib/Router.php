@@ -122,13 +122,13 @@ class Router {
 			 ."Routes should start w/ {HTTP method} "
 			 ."followed by a {URI path segment}\nex: 'GET /user'");
 		}
-		$http_method = $match['method'];
+		$http_method = strtoupper($match['method']);
         if( ! in_array($http_method, $this->known_http_methods))
         {
             throw new \InvalidArgumentException("Unknown HTTP Method [{$http_method}].\n"
                 ."Known methods [".implode(', ', $this->known_http_methods)."]");
         }
-		$this->learned_routes[$route] = new Route(
+		$this->learned_routes[] = new Route(
 			$http_method, $match['path']
 		);
 		return $this;
@@ -195,7 +195,7 @@ class Router {
                  * execution of the closure.
                  */
                 $route_work(array(
-                    Self::URI_PATH_KEY_NAME => $route->mapped_path_param_values())
+                    self::URI_PATH_KEY_NAME => $route->mapped_path_param_values())
                 ),
                 /*
                  * an ExtractionClosre retuns all of its internal var scope as a key/val
