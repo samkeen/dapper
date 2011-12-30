@@ -32,6 +32,11 @@ function with($route)
                 $is_request_route = true
             )
         );
+        /**
+         * We use a register_shutdown_function to simplify the front controller (index.php)
+         * With the shutdown function in place there is no need for an explicit method call
+         * at the end of index.php.
+         */
 		register_shutdown_function(
 			/**
 			 * this is where we will invoke the matched route
@@ -54,5 +59,14 @@ function with($route)
 			}
 		);
 	}
+    /**
+     * before we append another Route, see if the last appended
+     * Route is a match, if so, stop appending routes and exit through
+     * the registered shutdown function
+     */
+    if($router_instance->match_route())
+    {
+        exit();
+    }
 	return $router_instance->append_route($route);
 }
