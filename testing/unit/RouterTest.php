@@ -264,55 +264,6 @@ class RouterTest extends \BaseCase {
         $this->assertEquals('user',$matched_route->controller_name());
     }
 	
-    function testExtractPayloadReturnsEmptyArrayForRouteWithNoWork()
-    {
-        $payload = $this->router->extract_payload(
-            new Route(
-                'get',
-                '/'
-            )
-        );
-        $this->assertEquals(array(), $payload);
-    }
-    
-    function testExtractPayloadReturnsEmptyArrayNoWorkExposedForRoute()
-    {
-        
-        $route = new Route('get', '/');
-        $route->work(function(){$x = 'Hello';});
-        $payload = $this->router->extract_payload(
-            $route
-        );
-        $this->assertEquals(array(), $payload);
-    }
-    
-	function testExtractPayloadReturnsProperArrayForExposedWorkOfRoute()
-    {
-        
-        $route = new Route('get', '/');
-        $route->work(function(){$x = 'Hello';});
-        $route->exposed_work_var_names('x');
-        $payload = $this->router->extract_payload(
-            $route
-        );
-        $this->assertEquals(array('x'=>'Hello'), $payload);
-    }
-    function testExtractPayloadNonExposedVarsAreNotReturned()
-    {
-        
-        $route = new Route('get', '/');
-        $route->work(function(){
-            $x = 'Hello';
-            $y = 'World';
-        });
-        $route->exposed_work_var_names('x');
-        $payload = $this->router->extract_payload(
-            $route
-        );
-        $this->assertArrayNotHasKey('y', $payload);
-    }
-    
-    
     function testRequestPathParamsReturnsEmptyArrayIfNoParamsSignified()
     {
         $router = new Router(

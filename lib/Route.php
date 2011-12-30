@@ -33,10 +33,6 @@ class Route {
 	 */
 	private $work;
 	
-    /**
-     * @todo Move to Router
-     */
-	
 	/**
 	 * @param $http_method
 	 * @param $path
@@ -143,6 +139,40 @@ class Route {
         return func_num_args() 
             ? $this->mapped_path_param_values = (array)$mapped_path_param_values 
             : $this->mapped_path_param_values;
+    }
+    
+    /**
+     * If this Route has Work, this extracts a 'payload' from the Route
+     * The 'payload' is a set scope of variables retrieved when invoking
+     * the Route's ExtractingClosure.
+     * This variable scope is intersected with the whitelist defined by ->exposse() 
+     * for the the given $route.
+     * 
+     * @return array
+     */
+    function response_payload()
+    {
+        $template_payload = array();
+        if($route_work = $this->work())
+        {
+            $template_payload = array_intersect_key(
+                /*
+                 * the param used when executing the Extracting closure signifies
+                 * the variable scope that will be used (use()) for the ultimate
+                 * execution of the closure.
+                 */
+                $route_work(array(
+                    Router::URI_PATH_KEY_NAME => $this->mapped_path_param_values())
+                ),
+                /*
+                 * an ExtractionClosre retuns all of its internal var scope as a key/val
+                 * array. Of that array, $route->exposed_work_var_names() is a white list of keys 
+                 * that determines what will be exposed to the view tier ($template_payload)
+                 */
+                array_fill_keys($this->exposed_work_var_names(), null)
+            );
+        }
+        return $template_payload;
     }
 	
 	/**

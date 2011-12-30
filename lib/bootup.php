@@ -6,6 +6,8 @@ namespace clear;
 require_once __DIR__ . "/Env.php";
 spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
 
+$env = new Env();
+
 /**
  * index.php method
  * 
@@ -19,13 +21,14 @@ spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
  */
 function with($route)
 {
+    global $env;
 	static $router_instance;
 	if( ! $router_instance)
 	{
 		$router_instance = new Router(
-            new Route(
-                $_SERVER['REQUEST_METHOD'],
-                strtolower(trim(filter_input(INPUT_GET, '_c'))),
+            new Route( 
+                $env->request_method(),
+                $env->request_path(),
                 $is_request_route = true
             )
         );
@@ -35,26 +38,19 @@ function with($route)
 			 */
 			function() use($router_instance)
 			{
-                /*
-                 * default template_engine is plain old php ("php"), to use twig, make
-                 * this call
-                 * Router::config('template_engine', "twig");
-                 */
-                $config['template_engine'] = "twig";
-                /*
-                 * twig requires a env config array
-                 */
-                $config['template_env'] = array(
-                    'cache' 			=> TOP_DIR."/cache_write/twig_cache",
-                    'auto_reload' 		=> true,
-                    'debug'				=> true,
-                    'strict_variables'	=> true,
-                    'autoescape'		=> true,
+                $render_engine = new Responder\TwigTemplateResponse(
+                    array(
+                        'cache' 			=> TOP_DIR."/cache_write/twig_cache",
+                        'auto_reload' 		=> true,
+                        'debug'				=> true,
+                        'strict_variables'	=> true,
+                        'autoescape'		=> true,
+                    ),
+                    $router_instance,
+                    TOP_DIR."/templates",
+                    TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php'
                 );
-                $config['template_dir'] = TOP_DIR."/templates";
-                $config['cache_dir'] = TOP_DIR."/cache_write";
-                $responder = new Responder($config, $router_instance);
-                $responder->render();
+                $render_engine->complete();
 			}
 		);
 	}

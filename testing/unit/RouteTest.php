@@ -8,19 +8,19 @@ require_once __DIR__ . "/../BaseCase.php";
  */
 class RouteTest extends \BaseCase {
 	
-    public function testProperPath()
+    function testProperPath()
     {
 		$route = new Route('GET', '/user'	);
         $this->assertEquals('/user',$route->path());
     }
 	
-	public function testPathCaseSensitive()
+	function testPathCaseSensitive()
 	{
 		$route = new Route('GET', '/User'	);
 		$this->assertEquals('/User',$route->path());
 	}
 	
-	public function testInproperlySlashedPathIsCorrected()
+	function testInproperlySlashedPathIsCorrected()
 	{
 		$route = new Route('GET', '/user/');
 		$this->assertEquals('/user',$route->path());
@@ -38,49 +38,49 @@ class RouteTest extends \BaseCase {
 		$this->assertEquals('/user/:one',$route->path());
 	}
 	
-	public function testProperHttpMethod()
+	function testProperHttpMethod()
 	{
 		$route = new Route('GET', '/user'	);
 		$this->assertEquals('GET', $route->http_method());
 	}
 	
-	public function testProperHttpMethodCaseNormalized()
+	function testProperHttpMethodCaseNormalized()
 	{
 		$route = new Route('gEt', '/user'	);
 		$this->assertEquals('GET', $route->http_method());
 	}
 
-	public function testProperController()
+	function testProperController()
 	{
 		$route = new Route('GET', '/user'	);
 		$this->assertEquals('user', $route->controller_name());
 	}
 	
-	public function testProperControllerCaseNormalized()
+	function testProperControllerCaseNormalized()
 	{
 		$route = new Route('GET', '/usEr'	);
 		$this->assertEquals('user', $route->controller_name());
 	}
 
-    public function testProperUriPathSegments()
+    function testProperUriPathSegments()
     {
 		$route = new Route('GET', '/user/:id/:latest');
 		$this->assertEquals(array(':id',':latest'), $route->uri_path_segments());
     }
 	
-	public function testProperUriPathSegmentsCaseSensitive()
+	function testProperUriPathSegmentsCaseSensitive()
 	{
 		$route = new Route('GET', '/user/:iD/:Latest');
 		$this->assertEquals(array(':iD',':Latest'), $route->uri_path_segments());
 	}
 	
-	public function testSegemenstWithOutColonIgnored()
+	function testSegemenstWithOutColonIgnored()
 	{
 		$route = new Route('GET', '/user/id');
 		$this->assertEquals(array(), $route->uri_path_segments());
 	}
 	
-	public function testSegemenstWithIllegalCharsIgnored()
+	function testSegemenstWithIllegalCharsIgnored()
 	{
 		$route = new Route('GET', '/user/:i-d');
 		$this->assertEquals(array(), $route->uri_path_segments());
@@ -89,7 +89,7 @@ class RouteTest extends \BaseCase {
 		$this->assertEquals(array(':classic'), $route->uri_path_segments());
 	}
 
-    public function testWork()
+    function testWork()
     {
 		$route = new Route('GET', '/user/id');
 		$closure = function(){};
@@ -98,32 +98,64 @@ class RouteTest extends \BaseCase {
 		$this->assertSame($closure, $route->work()->closure());
     }
 
-    public function testViewNameSetterGetter()
+    function testViewNameSetterGetter()
     {
 		$route = new Route('GET', '/user/id');
 		$route->view_name('speed');
 		$this->assertEquals('speed', $route->view_name());
     }
 	
-	public function testViewNameSetterGetterCaseSensitive()
+	function testViewNameSetterGetterCaseSensitive()
 	{
 		$route = new Route('GET', '/user/id');
 		$route->view_name('spEEd');
 		$this->assertEquals('spEEd', $route->view_name());
 	}
 
-    public function testExposedWorkVarNames()
+    function testExposedWorkVarNames()
     {
 		$route = new Route('GET', '/user/id');
 		$route->exposed_work_var_names(array('user', 'message'));
 		$this->assertEquals(array('user', 'message'), $route->exposed_work_var_names());
     }
 	
-	public function testExposedWorkVarNamesStringConvertsToArray()
+	function testExposedWorkVarNamesStringConvertsToArray()
     {
 		$route = new Route('GET', '/user/id');
 		$route->exposed_work_var_names('user');
 		$this->assertEquals(array('user'), $route->exposed_work_var_names());
+    }
+    
+    function testExtractPayloadReturnsEmptyArrayForRouteWithNoWork()
+    {
+        $route = new Route('get','/');
+        $this->assertEquals(array(), $route->response_payload());
+    }
+    
+    function testExtractPayloadReturnsEmptyArrayNoWorkExposedForRoute()
+    {
+        $route = new Route('get','/');
+        $route->work(function(){$x = 'Hello';});
+        $this->assertEquals(array(), $route->response_payload());
+    }
+    function testExtractPayloadReturnsProperArrayForExposedWorkOfRoute()
+    {
+        
+        $route = new Route('get', '/');
+        $route->work(function(){$x = 'Hello';});
+        $route->exposed_work_var_names('x');
+        $this->assertEquals(array('x'=>'Hello'), $route->response_payload());
+    }
+    function testExtractPayloadNonExposedVarsAreNotReturned()
+    {
+        
+        $route = new Route('get', '/');
+        $route->work(function(){
+            $x = 'Hello';
+            $y = 'World';
+        });
+        $route->exposed_work_var_names('x');
+        $this->assertArrayNotHasKey('y', $route->response_payload());
     }
 	
 }
