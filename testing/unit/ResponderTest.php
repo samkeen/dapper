@@ -2,6 +2,7 @@
 namespace clear\Responder;
 use clear\Router;
 use clear\Route;
+use clear\Render\Text;
 
 require_once __DIR__ . "/../BaseCase.php";
 
@@ -13,17 +14,27 @@ class ResponderTest extends \BaseCase {
 	
     function testInstantiateNoErrors()
     {
-        new TestingResponse(
-            array(),
+        new CliResponder(
             new Router(
                 new Route('get', '/')
-            )
+            ),
+            new Text()
         );
         // just a sanity test
         $this->assertTrue(true);
     }
     
-    
-    
+    function testComplete()
+    {
+        $responder = new CliResponder(
+            new Router(
+                new Route('get', '/')
+            ),
+            new Text()
+        );
+        $responder->complete();
+        // just sanity check
+        $this->assertTrue(true);
+    }
     
 }

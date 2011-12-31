@@ -2,23 +2,26 @@
 /**
  * Original Author: sam
  * Date: 12/30/11
- * Time: 11:28 AM
+ * Time: 4:36 PM
  * 
  * @package clear
- * @subpackage Responder
+ * @subpackage Render
+ * 
  */
-namespace clear\Responder;
+namespace clear\Render;
 
 /**
+ * Utilizes plain old PHP templates
+ * 
  * @package clear
- * @subpackage Responder
+ * @subpackage Render 
  */
-class PhpTemplateResponse extends BaseResponder
+class PhpTemplate extends BaseRender
 {
-    function __construct($config, $matched_route)
+    function __construct(array $config = array())
     {
+        parent::__construct($config);
         $this->view_file_suffix = '.htm.php';
-        parent::__construct($config, $matched_route);
     }
 
     /**

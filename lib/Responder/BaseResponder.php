@@ -9,6 +9,8 @@
  */
 namespace clear\Responder;
 use clear\Env;
+use clear\Router;
+use clear\Render\BaseRender;
 
 /**
  * @package clear
@@ -57,25 +59,21 @@ abstract class BaseResponder
         505 => 'HTTP Version Not Supported'
     );
     /**
-     * @var array
-     */
-    protected $config;
-    /**
-     * @var string
-     */
-    protected $view_file_suffix;
-    /**
      * @var \clear\Router
      */
     protected $router;
     /**
-     * @param array $config
-     * @param \clear\Router $router
+     * @var \clear\Render\BaseRender
      */
-    function __construct(array $config, \clear\Router $router)
+    protected $render;
+    /**
+     * @param \clear\Router $router
+     * @param \clear\Render\BaseRender $render
+     */
+    function __construct(Router $router, BaseRender $render)
     {
-        $this->config = $config;
         $this->router = $router;
+        $this->render = $render;
     }
     
     function complete()
@@ -87,90 +85,81 @@ abstract class BaseResponder
             {
                 $view_name        = $route->view_name();
                 $template_payload = $route->response_payload();
-                $this->render_view($view_name, $template_payload);
+                $this->render->render_view($view_name, $template_payload);
             }
             catch(\Exception $e) 
             {
                 if(Env::is_dev())
                 {
                     $message = $e->getMessage()
-                        . "<pre>\n{$e->getTraceAsString()}\n</pre>";
+                        . "\n{$e->getTraceAsString()}\n";
                 }
                 else
                 {
                     $message = "";
                 }
-                $this->send_header(500);
-                $this->render_error(500, $message);
+                $this->invoke_header(500);
+                $this->render->render_error(500, $message);
             }
         }
         else // send 404
         {
-            $this->send_header(404);
+            $this->invoke_header(404);
             if(Env::is_dev())
             {
                 $requested_route = $this->router->requested_route();
-                $message  = "<pre>\n";
-                $message .= "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
+                $message = "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
                 $message .= "Known Routes:\n";
                 $message .= print_r($this->router->learned_routes(), true);
-                $message .= "\n</pre>";
-                $this->render_error(404, $message);
+                $message .= "\n";
+                $this->render->render_error(404, $message);
             }
         }
     }
+    
+    protected function invoke_header($response_code, $response_message=null)
+    {
+        $header_text = $this->construct_response_header_text($response_code);
+        /*
+         * some but not all render engines will render the sent headers in some way
+         */
+        $this->render->record_response_header($response_code, $header_text, $response_message);
+        $this->send_header($response_code, $header_text);
+    }
+    
     /**
-     * @abstract
-     * @param string $view_name
-     * @param array $payload
-     */
-    abstract function render_view($view_name, array $payload=array());
-    /**
-     * @abstract
-     * @param int $error_code
-     * @param string $error_message
-     */
-    abstract function render_error($error_code, $error_message);
-    /**
-     * The default behavior of this method is to send HTTP headers.
-     * Concrete classes are free to override that behavior.
+     * The default behavior of this method is to do nothing.
+     * Responders such as HttpResponder override this method in
+     * order to make the actual calls to header().
      * 
      * @param $response_code
+     * @param $header_text
      */
-    protected function send_header($response_code)
-    {
-        if(headers_sent($file, $line))
-        {
-            // @TODO build a logger 
-            // @see https://github.com/samkeen/clear/issues/9
-//            Env::log()->error(__METHOD__."  Headers already sent from {$file}::{$line}");
-        }
-        else
-        {
-            $server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) 
-                ? $_SERVER['SERVER_PROTOCOL'] 
-                : 'HTTP/1.1';
-            if (Env::is_cgi_request())
-            {
-                header("Status: {$response_code} "
-                    .self::response_code_text($response_code),
-                    true
-                );
-            }
-            else
-            {
-                header($server_protocol." {$response_code} "
-                    .self::response_code_text($response_code),
-                    true,
-                    $response_code
-                );
-            }
-        }
-    }
+    protected function send_header($response_code, $header_text){}
+    
     private static function response_code_text($response_code)
     {
         return isset(self::$response_codes[$response_code]) 
             ? self::$response_codes[$response_code]
             : null;
+    }
+    
+    private function construct_response_header_text($response_code)
+    {
+        $header_text = "";
+        $server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) 
+            ? $_SERVER['SERVER_PROTOCOL'] 
+            : 'HTTP/1.1';
+        if (Env::is_cgi_request())
+        {
+            $header_text = "Status: {$response_code} "
+                .self::response_code_text($response_code);
+        }
+        else
+        {
+            $header_text = $server_protocol." {$response_code} "
+                .self::response_code_text($response_code);
+        }
+        return $header_text;
     }
 }

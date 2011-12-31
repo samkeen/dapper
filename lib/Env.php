@@ -18,7 +18,13 @@ class Env
     
     private $request_method;
     private $request_path;
+    /**
+     * @var bool
+     */
+    private static $is_dev;
+    
     const TOP_DIR = __DIR__;
+    const REQUEST_PATH_KEY = '_c';
     /**
      * auto loader for the entire app
      * 
@@ -31,9 +37,12 @@ class Env
         if( ! strstr($class, __NAMESPACE__)) {return false;}
         require(str_replace(__NAMESPACE__.'/','',$class));
     }
-    
-    function __construct()
+    /**
+     * @param bool $is_dev
+     */
+    function __construct($is_dev=false)
     {
+        self::$is_dev = $is_dev;
         if(self::is_commandline_request())
         {
             global $argc, $argv;
@@ -45,10 +54,18 @@ class Env
             $this->request_method = isset($argv[1]) ? $argv[1] : null;
             $this->request_path   = isset($argv[2]) ? $argv[2] : null;
         }
-        else if( ! self::is_cli_request())
+        else
         {
-            $this->request_method = strtolower(filter_input(INPUT_SERVER, 'REQUEST_METHOD'));
-            $this->request_path   = strtolower(trim(filter_input(INPUT_GET, '_c')));
+            /*
+             * note, couldn't use filter_input as that method does not acknowledge manual 
+             * changes made to those arrays via the tests. 
+             */
+            $this->request_method = isset($_SERVER['REQUEST_METHOD'])
+                ? strtolower(filter_var($_SERVER['REQUEST_METHOD'], FILTER_SANITIZE_STRING))
+                : null;
+            $this->request_path = isset($_GET[self::REQUEST_PATH_KEY])
+                ? strtolower(filter_var(trim($_GET[self::REQUEST_PATH_KEY], FILTER_SANITIZE_STRING)))
+                : null;
         }
     }
     
@@ -68,7 +85,7 @@ class Env
     
     static function is_dev()
     {
-        return true;
+        return self::$is_dev;
     }
 
     static function is_cli_request()

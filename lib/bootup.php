@@ -6,7 +6,7 @@ namespace clear;
 require_once __DIR__ . "/Env.php";
 spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
 
-$env = new Env();
+$env = new Env($is_dev = true);
 
 /**
  * index.php method
@@ -43,7 +43,7 @@ function with($route)
 			 */
 			function() use($router_instance)
 			{
-                $render_engine = new Responder\TwigTemplateResponse(
+                $render_strategy = new Render\TwigTemplate(
                     array(
                         'cache' 			=> TOP_DIR."/cache_write/twig_cache",
                         'auto_reload' 		=> true,
@@ -51,11 +51,14 @@ function with($route)
                         'strict_variables'	=> true,
                         'autoescape'		=> true,
                     ),
-                    $router_instance,
                     TOP_DIR."/templates",
                     TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php'
                 );
-                $render_engine->complete();
+                $responder = new Responder\HttpResponder(
+                    $router_instance,
+                    $render_strategy
+                );
+                $responder->complete();
 			}
 		);
 	}

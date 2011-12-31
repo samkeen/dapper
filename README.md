@@ -14,7 +14,37 @@ Utilizing a Fluent Interface
 
 ## ORM support
 
-??
+## Key Objects
+
+### Env
+
+Env contains the context of the request.  This includes all pertinent aspects of the 'Server' and the 'Request'. 
+
+### Route
+
+A Route is made up of a method (get, post, put, ...) and a path (/users/1, /posts/latest)
+Routes are utilized in two situations in this system.
+- The request Route
+- The Router has many learned Routes
+
+### Work
+
+Learned Routes of the Router can optionally have Work to perform.  This Work of Route that is a
+match to the request Route is invoked in the Responder.
+
+### Router
+
+The sole purpose of the Router is to attempt to match the request Route to one of its learned Routes.
+
+### Responder
+
+The Responder is responsible for stitching the result of the matched Route's Work with a RenderStrategy.  Then
+send that render back to the Client.
+Example Responders are HTTP and CLI.
+
+### RenderStrategy
+
+Used by Responder to combines the data (result of the Route's work) with a view.
 
 ## Laziness
 
