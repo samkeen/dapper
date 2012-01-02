@@ -41,7 +41,7 @@ function with($route)
 			/**
 			 * this is where we will invoke the matched route
 			 */
-			function() use($router_instance)
+			function() use($router_instance, $env)
 			{
                 $render_strategy = new Render\TwigTemplate(
                     array(
@@ -56,7 +56,8 @@ function with($route)
                 );
                 $responder = new Responder\HttpResponder(
                     $router_instance,
-                    $render_strategy
+                    $render_strategy,
+                    $env
                 );
                 $responder->complete();
 			}

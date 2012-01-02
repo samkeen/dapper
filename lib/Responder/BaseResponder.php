@@ -67,13 +67,20 @@ abstract class BaseResponder
      */
     protected $render;
     /**
+     * @var \clear\Env
+     */
+    protected $env;
+    
+    /**
      * @param \clear\Router $router
      * @param \clear\Render\BaseRender $render
+     * @param \clear\Env $env
      */
-    function __construct(Router $router, BaseRender $render)
+    function __construct(Router $router, BaseRender $render, Env $env)
     {
         $this->router = $router;
         $this->render = $render;
+        $this->env = $env;
     }
     
     function complete()
@@ -89,7 +96,7 @@ abstract class BaseResponder
             }
             catch(\Exception $e) 
             {
-                if(Env::is_dev())
+                if($this->env->is_dev())
                 {
                     $message = $e->getMessage()
                         . "\n{$e->getTraceAsString()}\n";
@@ -105,7 +112,7 @@ abstract class BaseResponder
         else // send 404
         {
             $this->invoke_header(404);
-            if(Env::is_dev())
+            if($this->env->is_dev())
             {
                 $requested_route = $this->router->requested_route();
                 $message = "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
@@ -150,7 +157,7 @@ abstract class BaseResponder
         $server_protocol = (isset($_SERVER['SERVER_PROTOCOL'])) 
             ? $_SERVER['SERVER_PROTOCOL'] 
             : 'HTTP/1.1';
-        if (Env::is_cgi_request())
+        if ($this->env->is_cgi_request())
         {
             $header_text = "Status: {$response_code} "
                 .self::response_code_text($response_code);

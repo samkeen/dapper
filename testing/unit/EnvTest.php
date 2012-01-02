@@ -15,32 +15,32 @@ class EnvTest extends \BaseCase {
         // just a sanity test
         $this->assertTrue(true);
     }
-    public function testAutoloadGetFalseForNonExistentClass()
+    function testAutoloadGetFalseForNonExistentClass()
     {
         $this->assertFalse(Env::autoload('not_a_real_class'));
     }
-    public function testAutoloadGetNotFalseForNonExistentClass()
+    function testAutoloadGetNotFalseForNonExistentClass()
     {
         $this->assertTrue(Env::autoload('clear\Router')!==false);
     }
 
-    public function testRequestMethodReturnsNullIfUnknown()
+    function testRequestMethodReturnsNullIfUnknown()
     {
         $env = new Env();
         $this->assertNull($env->request_method());
     }
-    public function testRequestMethodReturnsProperValueFromSeverContext()
+    function testRequestMethodReturnsProperValueFromSeverContext()
     {
         $_SERVER['REQUEST_METHOD'] = 'boo';
         $env = new Env();
         $this->assertEquals('boo', $env->request_method());
     }
-    public function testRequestPathReturnsNullIfUnknown()
+    function testRequestPathReturnsNullIfUnknown()
     {
         $env = new Env();
         $this->assertNull($env->request_path());
     }
-    public function testRequestPathReturnsProperValueFromRequestContext()
+    function testRequestPathReturnsProperValueFromRequestContext()
     {
         $_GET[Env::REQUEST_PATH_KEY] = 'boo';
         $env = new Env();
@@ -50,7 +50,7 @@ class EnvTest extends \BaseCase {
     /**
      * @todo Implement testLog().
      */
-    public function testLog()
+    function testLog()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -58,30 +58,64 @@ class EnvTest extends \BaseCase {
         );
     }
     
-    public function testIsDevReturnsFalseByDefault()
+    function testIsDevReturnsFalseByDefault()
     {
-        $this->assertFalse(Env::is_dev());
+        $env = new Env();
+        $this->assertFalse($env->is_dev());
     }
     
-    public function testIsDevReturnsTrueViaOptionalContructorParam()
+    function testIsDevReturnsTrueViaOptionalConstructorParam()
     {
         $env = new Env($is_dev = true);
-        $this->assertTrue(Env::is_dev());
+        $this->assertTrue($env->is_dev());
     }
 
-    public function testIsCliRequestReturnsTrueForAUnitTest()
+    function testIsCliRequestReturnsTrueForAUnitTest()
     {
-        $this->assertTrue(Env::is_cli_request());
+        $env = new Env($is_dev = true);
+        $this->assertTrue($env->is_cli_request());
     }
 
     public function testIsCgiRequestReturnsFalseForAUnitTest()
     {
-        $this->assertFalse(Env::is_cgi_request());
+        $env = new Env($is_dev = true);
+        $this->assertFalse($env->is_cgi_request());
     }
     
-    public function testIsCommandLineRequestReturnsFalseForAUnitTest()
+    function testIsCommandLineRequestReturnsFalseForAUnitTest()
     {
-        $this->assertFalse(Env::is_commandline_request());
+        $env = new Env($is_dev = true);
+        $this->assertFalse($env->is_commandline_request());
+    }
+    
+    function testCommandLineSendUsageError()
+    {
+        /*
+         * EnvMock just overrides is_commandline_request() to return 
+         * true.  Otherwise it is identical
+         */
+        require_once TOP_DIR.'/testing/mocks/EnvMock.php';
+        $GLOBALS['argv']=array('index.php');
+        $GLOBALS['argc']=count($GLOBALS['argv']);
+        ob_start();
+        new EnvMock();
+        $output = ob_get_clean();
+        $this->assertRegExp('/USAGE:/', $output);
+        $this->assertRegExp('/WARN:/', $output);
+    }
+    function testCommandLineSetsExpectedMethodAndPath()
+    {
+        /*
+         * EnvMock just overrides is_commandline_request() to return 
+         * true.  Otherwise it is identical
+         */
+        require_once TOP_DIR.'/testing/mocks/EnvMock.php';
+        $GLOBALS['argv']=array('index.php', 'get', '/user');
+        $GLOBALS['argc']=count($GLOBALS['argv']);
+        $env = new EnvMock();
+        
+        $this->assertEquals('get', $env->request_method());
+        $this->assertEquals('/user', $env->request_path());
     }
 
 }

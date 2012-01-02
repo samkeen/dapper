@@ -29,6 +29,9 @@
 		</blacklist>
 		<whitelist addUncoveredFilesFromWhitelist="true">
 			<directory suffix=".php">../lib</directory>
+            <exclude>
+                <file >../lib/bootup.php</file>
+            </exclude>
 		</whitelist>
 	</filter>
 

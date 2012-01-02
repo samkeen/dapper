@@ -8,7 +8,6 @@
  * @subpackage Responder
  */
 namespace clear\Responder;
-use clear\Env;
 
 /**
  * @package clear
@@ -29,7 +28,7 @@ class HttpResponder extends BaseResponder
         }
         else
         {
-            if (Env::is_cgi_request())
+            if ($this->env->is_cgi_request())
             {
                 header($header_text, true);
             }

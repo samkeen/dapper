@@ -21,7 +21,7 @@ class Env
     /**
      * @var bool
      */
-    private static $is_dev;
+    private $is_dev;
     
     const TOP_DIR = __DIR__;
     const REQUEST_PATH_KEY = '_c';
@@ -42,8 +42,8 @@ class Env
      */
     function __construct($is_dev=false)
     {
-        self::$is_dev = $is_dev;
-        if(self::is_commandline_request())
+        $this->is_dev = $is_dev;
+        if(   static::is_commandline_request())
         {
             global $argc, $argv;
             if($argc!=3)
@@ -83,22 +83,22 @@ class Env
         error_log($message);
     }
     
-    static function is_dev()
+    function is_dev()
     {
-        return self::$is_dev;
+        return $this->is_dev;
     }
 
-    static function is_cli_request()
+    function is_cli_request()
     {
         return php_sapi_name()=="cli";
     }
     
-    static function is_cgi_request()
+    function is_cgi_request()
     {
         return substr(php_sapi_name(), 0, 3) == 'cgi';
     }
     
-    static function is_commandline_request()
+    function is_commandline_request()
     {
         return self::is_cli_request()
             && isset($_SERVER['SCRIPT_NAME'])
