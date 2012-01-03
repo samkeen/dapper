@@ -105,8 +105,7 @@ abstract class BaseResponder
                 {
                     $message = "";
                 }
-                $this->invoke_header(500);
-                $this->render->render_error(500, $message);
+                $this->error_response(500, $message);
             }
         }
         else // send 404
@@ -122,6 +121,15 @@ abstract class BaseResponder
                 $this->render->render_error(404, $message);
             }
         }
+    }
+    /**
+     * @param $response_code
+     * @param null $response_message
+     */
+    function error_response($response_code, $response_message=null)
+    {
+        $this->invoke_header($response_code, $response_message);
+        $this->render->render_error($response_code, $response_message);
     }
     
     protected function invoke_header($response_code, $response_message=null)

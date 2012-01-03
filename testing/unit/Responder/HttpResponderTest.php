@@ -39,5 +39,6 @@ class HttpResponderTest extends \BaseCase {
         // just sanity check
         $this->assertTrue(true);
     }
+
     
 }

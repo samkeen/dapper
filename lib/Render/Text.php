@@ -24,7 +24,8 @@ class Text extends BaseRender
      */
     function render_view($view_name, array $payload = array())
     {
-        // TODO: Implement render_view() method.
+        echo "View: {$view_name}\n";
+        echo var_export($payload);
     }
 
     /**
@@ -33,7 +34,7 @@ class Text extends BaseRender
      */
     function render_error($error_code, $error_message)
     {
-        // TODO: Implement render_error() method.
+        echo $error_message;
     }
 
 }

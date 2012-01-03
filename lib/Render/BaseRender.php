@@ -52,4 +52,12 @@ abstract class BaseRender
             'response_message' => $response_message,
         );
     }
+    /**
+     * getter for $this->response_headers;
+     * @return array
+     */
+    function response_headers()
+    {
+        return $this->response_headers;
+    }
 }

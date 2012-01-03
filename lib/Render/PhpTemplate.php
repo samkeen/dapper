@@ -41,6 +41,6 @@ class PhpTemplate extends BaseRender
     function render_view($view_name, array $payload=array())
     {
         extract($payload);
-        include __DIR__ . $this->config['template_dir']."/{$view_name}{$this->view_file_suffix}";
+        include $this->config['template_dir']."/{$view_name}{$this->view_file_suffix}";
     }
 }

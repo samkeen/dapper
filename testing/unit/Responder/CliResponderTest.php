@@ -40,4 +40,42 @@ class CliResponderTest extends \BaseCase {
         $this->assertTrue(true);
     }
     
+    function testErrorResponseEchosErrorMessage()
+    {
+        $responder = new CliResponder(
+            new Router(
+                new Route('get', '/')
+            ),
+            new Text(),
+            new Env()
+        );
+        ob_start();
+        $responder->error_response(404, "Not Found Test");
+        $echoed_response = ob_get_clean();
+        // just sanity check
+        $this->assertEquals("Not Found Test", $echoed_response);
+    }
+    function testErrorResponseRecordsHeaders()
+    {
+        $renderer = new Text();
+        $responder = new CliResponder(
+            new Router(
+                new Route('get', '/')
+            ),
+            $renderer,
+            new Env()
+        );
+        ob_start();
+        $responder->error_response(404, "Not Found Test");
+        $echoed_response = ob_get_clean();
+        // just sanity check
+        $this->assertArrayHasKey(404, $renderer->response_headers());
+        $response_headers = $renderer->response_headers();
+        $this->assertEquals(1, count($response_headers[404]), 
+            "There should be only 1 404 response header recorded on the Render");
+        $this->assertEquals(404, $response_headers[404][0]['response_code']);
+        $this->assertEquals("HTTP/1.1 404 Not Found", $response_headers[404][0]['header_text']);
+        $this->assertEquals("Not Found Test", $response_headers[404][0]['response_message']);
+    }
+    
 }
