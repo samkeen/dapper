@@ -3,6 +3,9 @@
 * **Compactness and low noise**
 Acomplish whats needs in a way that makes sense with as little code as possible.
 
+* **Law Of Demeter enforced**
+Classes and methods are small and specific.  Strive to have proper separation of of concernes throughout the codebase.  
+
 * **Laziness**
 Do work only when you have to.
 
@@ -12,7 +15,7 @@ Do work only when you have to.
 ## Summary
 A terse and restful PHP front controller based web framework.
 At this point this framework is further into the experimental realm than the practical use realm.  I do plan to eventually take it squarely into the usable framework spectrum soon.
-The focus of this framework is on the simplicity of the syntax of the front controller (index.php).  Inspirations from Ruby's [Sinatra](http://www.sinatrarb.com/) should be evident here.
+The focus of this framework is on the simplicity of the syntax of the front controller (index.php).
 In that controller, route matching takes the form:
     "when you see this route, expose these parts from this work to this view."
 Or in code:
