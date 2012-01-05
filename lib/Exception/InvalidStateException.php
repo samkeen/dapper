@@ -1,12 +1,12 @@
 <?php
 /**
- * @package clear
+ * @package dapper
  */
-namespace clear\Exception;
+namespace dapper\Exception;
 
 /**
  * 
- * @package clear
+ * @package dapper
  * @subpackage Exception
  */
 class InvalidStateException extends \Exception

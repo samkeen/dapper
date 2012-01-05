@@ -4,13 +4,13 @@
  * Date: 12/24/11
  * Time: 11:23 PM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Util
  */
-namespace clear;
+namespace dapper;
 /**
  * 
- * @package clear
+ * @package dapper
  * @subpackage Util
  */
 class Env

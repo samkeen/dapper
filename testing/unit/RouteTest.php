@@ -1,5 +1,5 @@
 <?php
-namespace clear;
+namespace dapper;
 require_once __DIR__ . "/../BaseCase.php";
 
 /**
@@ -94,7 +94,7 @@ class RouteTest extends \BaseCase {
 		$route = new Route('GET', '/user/id');
 		$closure = function(){};
 		$route->work($closure);
-		$this->assertInstanceOf('clear\Work', $route->work());
+		$this->assertInstanceOf('dapper\Work', $route->work());
 		$this->assertSame($closure, $route->work()->closure());
     }
 

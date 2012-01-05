@@ -1,8 +1,8 @@
 <?php
 /**
- * @package clear
+ * @package dapper
  */
-namespace clear;
+namespace dapper;
 require_once __DIR__ . "/Env.php";
 spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
 

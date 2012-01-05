@@ -1,5 +1,5 @@
 <?php
-namespace clear\Render;
+namespace dapper\Render;
 
 require_once __DIR__ . "/../../BaseCase.php";
 

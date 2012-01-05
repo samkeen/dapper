@@ -4,14 +4,14 @@
  * Date: 12/30/11
  * Time: 4:36 PM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Render
  * 
  */
-namespace clear\Render;
+namespace dapper\Render;
 
 /**
- * @package clear
+ * @package dapper
  * @subpackage Render 
  */
 abstract class BaseRender

@@ -1,9 +1,9 @@
 <?php
-namespace clear\Responder;
-use clear\Router;
-use clear\Route;
-use clear\Env;
-use clear\Render\Text;
+namespace dapper\Responder;
+use dapper\Router;
+use dapper\Route;
+use dapper\Env;
+use dapper\Render\Text;
 
 require_once __DIR__ . "/../../BaseCase.php";
 

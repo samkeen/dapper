@@ -1,8 +1,8 @@
 <?php
 /**
- * @package clear
+ * @package dapper
  */
-namespace clear;
+namespace dapper;
 /**
  * Route plays 2 similar roles.
  * - The Router is taught a list of Routes.
@@ -10,7 +10,7 @@ namespace clear;
  * of its learned Routes.
  * 
  * 
- * @package clear
+ * @package dapper
  */
 class Route {
 

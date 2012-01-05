@@ -4,16 +4,16 @@
  * Date: 12/30/11
  * Time: 11:28 AM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
-namespace clear\Responder;
+namespace dapper\Responder;
 
 /**
  * Responds to a console interface 
  * - No calls to header()
  * 
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
 class CliResponder extends BaseResponder

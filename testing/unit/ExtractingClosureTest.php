@@ -1,5 +1,5 @@
 <?php
-namespace clear;
+namespace dapper;
 require_once __DIR__ . "/../BaseCase.php";
 
 /**

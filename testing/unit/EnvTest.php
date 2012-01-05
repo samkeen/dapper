@@ -1,5 +1,5 @@
 <?php
-namespace clear;
+namespace dapper;
 
 require_once __DIR__ . "/../BaseCase.php";
 
@@ -21,7 +21,7 @@ class EnvTest extends \BaseCase {
     }
     function testAutoloadGetNotFalseForNonExistentClass()
     {
-        $this->assertTrue(Env::autoload('clear\Router')!==false);
+        $this->assertTrue(Env::autoload('dapper\Router')!==false);
     }
 
     function testRequestMethodReturnsNullIfUnknown()

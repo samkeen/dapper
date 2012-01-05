@@ -1,8 +1,8 @@
 <?php
 /**
- * @package clear
+ * @package dapper
  */
-namespace clear;
+namespace dapper;
 
 /**
  * 
@@ -11,7 +11,7 @@ namespace clear;
  * learned Routes.
  * 
  * 
- * @package clear
+ * @package dapper
  */
 class Router {
 	

@@ -4,16 +4,16 @@
  * Date: 12/30/11
  * Time: 11:28 AM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
-namespace clear\Responder;
-use clear\Env;
-use clear\Router;
-use clear\Render\BaseRender;
+namespace dapper\Responder;
+use dapper\Env;
+use dapper\Router;
+use dapper\Render\BaseRender;
 
 /**
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
 abstract class BaseResponder
@@ -59,22 +59,22 @@ abstract class BaseResponder
         505 => 'HTTP Version Not Supported'
     );
     /**
-     * @var \clear\Router
+     * @var \dapper\Router
      */
     protected $router;
     /**
-     * @var \clear\Render\BaseRender
+     * @var \dapper\Render\BaseRender
      */
     protected $render;
     /**
-     * @var \clear\Env
+     * @var \dapper\Env
      */
     protected $env;
     
     /**
-     * @param \clear\Router $router
-     * @param \clear\Render\BaseRender $render
-     * @param \clear\Env $env
+     * @param \dapper\Router $router
+     * @param \dapper\Render\BaseRender $render
+     * @param \dapper\Env $env
      */
     function __construct(Router $router, BaseRender $render, Env $env)
     {

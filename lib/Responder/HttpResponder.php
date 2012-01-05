@@ -4,13 +4,13 @@
  * Date: 12/30/11
  * Time: 11:28 AM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
-namespace clear\Responder;
+namespace dapper\Responder;
 
 /**
- * @package clear
+ * @package dapper
  * @subpackage Responder
  */
 class HttpResponder extends BaseResponder
@@ -23,7 +23,7 @@ class HttpResponder extends BaseResponder
         if(headers_sent($file, $line))
         {
             // @TODO build a logger 
-            // @see https://github.com/samkeen/clear/issues/9
+            // @see https://github.com/samkeen/dapper/issues/9
 //            Env::log()->error(__METHOD__."  Headers already sent from {$file}::{$line}");
         }
         else

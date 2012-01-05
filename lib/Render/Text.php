@@ -4,16 +4,16 @@
  * Date: 12/30/11
  * Time: 4:36 PM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Render
  * 
  */
-namespace clear\Render;
+namespace dapper\Render;
 
 /**
  * Just text output.  No attempts to add markup of any kind
  * 
- * @package clear
+ * @package dapper
  * @subpackage Render 
  */
 class Text extends BaseRender

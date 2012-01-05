@@ -1,5 +1,5 @@
 <?php
-namespace clear;
+namespace dapper;
 require_once __DIR__ . "/../BaseCase.php";
 
 class RouterTest extends \BaseCase {
@@ -30,7 +30,7 @@ class RouterTest extends \BaseCase {
     }
 		
 	/**
-     * @expectedException clear\Exception\InvalidStateException
+     * @expectedException dapper\Exception\InvalidStateException
      */
     function testDo_workInvalidStateExceptionThrown()
     {
@@ -53,7 +53,7 @@ class RouterTest extends \BaseCase {
 	}
 
     /**
-     * @expectedException clear\Exception\InvalidStateException
+     * @expectedException dapper\Exception\InvalidStateException
      */
     function testBlindCallToExpose()
     {
@@ -133,7 +133,7 @@ class RouterTest extends \BaseCase {
 	}
 
     /**
-     * @expectedException clear\Exception\InvalidStateException
+     * @expectedException dapper\Exception\InvalidStateException
      */
     function testBlindCallToRenderThrowsException()
     {

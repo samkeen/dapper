@@ -1,11 +1,11 @@
 <?php
 /**
- * @package clear
+ * @package dapper
  */
-namespace clear;
+namespace dapper;
 /**
  * 
- * @package clear
+ * @package dapper
  */
 class ExtractingClosure {
     

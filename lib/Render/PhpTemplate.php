@@ -4,16 +4,16 @@
  * Date: 12/30/11
  * Time: 4:36 PM
  * 
- * @package clear
+ * @package dapper
  * @subpackage Render
  * 
  */
-namespace clear\Render;
+namespace dapper\Render;
 
 /**
  * Utilizes plain old PHP templates
  * 
- * @package clear
+ * @package dapper
  * @subpackage Render 
  */
 class PhpTemplate extends BaseRender
