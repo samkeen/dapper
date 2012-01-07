@@ -30,9 +30,5 @@ class WorkTest extends \BaseCase {
             ."It was instead:".print_r($result, true)
         );
     }
-	
-	
-	
-	
 }
  

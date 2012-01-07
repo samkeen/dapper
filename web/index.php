@@ -1,7 +1,6 @@
 <?php
 namespace dapper;
-const TOP_DIR = __DIR__;
-require __DIR__."/lib/bootup.php";
+require __DIR__ . "/../lib/bootup.php";
 
 
 with("GET /")

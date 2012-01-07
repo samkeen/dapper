@@ -23,7 +23,6 @@ class Env
      */
     private $is_dev;
     
-    const TOP_DIR = __DIR__;
     const REQUEST_PATH_KEY = '_c';
     /**
      * auto loader for the entire app

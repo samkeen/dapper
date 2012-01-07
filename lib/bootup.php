@@ -43,16 +43,17 @@ function with($route)
 			 */
 			function() use($router_instance, $env)
 			{
+                $top_dir = realpath(__DIR__."/..");
                 $render_strategy = new Render\TwigTemplate(
                     array(
-                        'cache' 			=> TOP_DIR."/cache_write/twig_cache",
+                        'cache' 			=> "{$top_dir}/cache_write/twig_cache",
                         'auto_reload' 		=> true,
                         'debug'				=> true,
                         'strict_variables'	=> true,
                         'autoescape'		=> true,
                     ),
-                    TOP_DIR."/templates",
-                    TOP_DIR . '/vendors/twig/lib/Twig/Autoloader.php'
+                    "{$top_dir}/templates",
+                    "{$top_dir}/vendors/twig/lib/Twig/Autoloader.php"
                 );
                 $responder = new Responder\HttpResponder(
                     $router_instance,
