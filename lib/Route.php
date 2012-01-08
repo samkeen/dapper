@@ -109,16 +109,7 @@ class Route {
 			return $this->work;
 		}
 	}
-	/**
-     * @param array|null $exposed_work_variable_names
-     * @return array
-     */
-	function exposed_work_var_names($exposed_work_variable_names=null)
-	{
-		return func_num_args() 
-			? $this->exposed_work_var_names = (array)$exposed_work_variable_names 
-			: $this->exposed_work_var_names;
-	}
+
     /**
      * These are the path param placeholders (i.e. /user/:name) mapped
      * to the matched request route values
@@ -152,27 +143,16 @@ class Route {
      */
     function response_payload()
     {
-        $template_payload = array();
-        if($route_work = $this->work())
-        {
-            $template_payload = array_intersect_key(
-                /*
-                 * the param used when executing the Extracting closure signifies
-                 * the variable scope that will be used (use()) for the ultimate
-                 * execution of the closure.
-                 */
-                $route_work(array(
+        return ($route_work = $this->work())
+            /*
+             * the param used when executing the Extracting closure signifies
+             * the variable scope that will be used (use()) for the ultimate
+             * execution of the closure.
+             */
+            ? $template_payload = $route_work(array(
                     Router::URI_PATH_KEY_NAME => $this->mapped_path_param_values())
-                ),
-                /*
-                 * an ExtractionClosre retuns all of its internal var scope as a key/val
-                 * array. Of that array, $route->exposed_work_var_names() is a white list of keys 
-                 * that determines what will be exposed to the view tier ($template_payload)
-                 */
-                array_fill_keys($this->exposed_work_var_names(), null)
-            );
-        }
-        return $template_payload;
+            )
+            : array();
     }
 	
 	/**

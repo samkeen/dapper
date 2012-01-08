@@ -111,20 +111,6 @@ class RouteTest extends \BaseCase {
 		$route->view_name('spEEd');
 		$this->assertEquals('spEEd', $route->view_name());
 	}
-
-    function testExposedWorkVarNames()
-    {
-		$route = new Route('GET', '/user/id');
-		$route->exposed_work_var_names(array('user', 'message'));
-		$this->assertEquals(array('user', 'message'), $route->exposed_work_var_names());
-    }
-	
-	function testExposedWorkVarNamesStringConvertsToArray()
-    {
-		$route = new Route('GET', '/user/id');
-		$route->exposed_work_var_names('user');
-		$this->assertEquals(array('user'), $route->exposed_work_var_names());
-    }
     
     function testExtractPayloadReturnsEmptyArrayForRouteWithNoWork()
     {
@@ -137,25 +123,6 @@ class RouteTest extends \BaseCase {
         $route = new Route('get','/');
         $route->work(function(){$x = 'Hello';});
         $this->assertEquals(array(), $route->response_payload());
-    }
-    function testExtractPayloadReturnsProperArrayForExposedWorkOfRoute()
-    {
-        
-        $route = new Route('get', '/');
-        $route->work(function(){$x = 'Hello';});
-        $route->exposed_work_var_names('x');
-        $this->assertEquals(array('x'=>'Hello'), $route->response_payload());
-    }
-    function testExtractPayloadNonExposedVarsAreNotReturned()
-    {
-        
-        $route = new Route('get', '/');
-        $route->work(function(){
-            $x = 'Hello';
-            $y = 'World';
-        });
-        $route->exposed_work_var_names('x');
-        $this->assertArrayNotHasKey('y', $route->response_payload());
     }
 	
 }

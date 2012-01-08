@@ -27,9 +27,8 @@ with("GET /")
 
 with("GET /hello/:name")
 	->do_work(function(){
-		$message = "Hello {$path[':name']}";
+		+$message = "Hello {$path[':name']}";
 	})
-	->expose('message')
 	->render('hello');
 ```
 
@@ -85,8 +84,7 @@ with("GET /")
 
 with("GET /hello/:name")
 	->do_work(function(){
-		$message = "Hello {$path[':name']}";
+		+$message = "Hello {$path[':name']}";
 	})
-	->expose('message')
 	->render('hello');
 ```

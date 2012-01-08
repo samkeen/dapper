@@ -31,7 +31,24 @@ class Work {
 		 */
 		$extracting_closure = new ExtractingClosure($this->closure);
 		$closure = $extracting_closure->transform($param);
-		return $closure();
+        /*
+         * array(
+         *   path    => array(),
+         *   message => ""
+         * )
+         */
+        $template_payload = array_intersect_key(
+            /*
+             * the param used when executing the Extracting closure signifies
+             * the variable scope that will be used (use()) for the ultimate
+             * execution of the closure.
+             */
+            $closure(),
+            array_fill_keys($extracting_closure->exposed_var_names(), null)
+        );
+        
+        
+		return $template_payload;
 	}
 	
 	/**

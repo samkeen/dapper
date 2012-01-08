@@ -33,6 +33,10 @@ class ExtractingClosure {
 	 * @var \Closure
 	 */
 	private $initial_closure;
+    /**
+     * @var array
+     */
+    private $exposed_var_names = array();
 	
 	function __construct(\Closure $initial_closure)
 	{
@@ -75,6 +79,11 @@ class ExtractingClosure {
 		return $__closure;
 	}
     
+    function exposed_var_names()
+    {
+        return $this->exposed_var_names;
+    }
+    
     private function build_closure_code_string($closure_uses)
     {
         $use_statement = $this->closure_use_statement(array_keys($closure_uses));
@@ -85,6 +94,18 @@ class ExtractingClosure {
         $code = '';
         while ($file->key() < $reflection_work->getEndLine())
         {
+            $expose_variables_match = array();
+            $code_line = $file->current();
+            /*
+             * extract any found (+) notated variables
+             */
+            if(preg_match_all('/\+ ?\$(?P<var_name>\w+)/', $code_line, $expose_variables_match))
+            {
+                $this->exposed_var_names = array_merge(
+                    $this->exposed_var_names, 
+                    $expose_variables_match['var_name']
+                );
+            }
             $code .= $file->current();
             $file->next();
         }

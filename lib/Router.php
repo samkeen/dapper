@@ -65,25 +65,6 @@ class Router {
 	/**
 	 * Router teaching method used in index.php
 	 * 
-	 * @param $name_to_expose_to_view
-	 * @return Router
-	 */
-	function expose($name_to_expose_to_view)
-	{
-		$name_to_expose_to_view = trim($name_to_expose_to_view);
-		if($name_to_expose_to_view !== "")
-		{
-			$this->last_learned_route()->exposed_work_var_names(
-				// remove empty elements and re-index
-				array_values(array_filter(preg_split('/[\s,]/',$name_to_expose_to_view)))
-			);
-		}
-		return $this;
-	}
-	
-	/**
-	 * Router teaching method used in index.php
-	 * 
 	 * @param $view_name
 	 * @return Router
 	 */

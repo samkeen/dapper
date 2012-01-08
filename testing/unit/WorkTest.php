@@ -20,9 +20,12 @@ class WorkTest extends \BaseCase {
             very same supplied to Work::__construct()");
     }
     
-    function testInvokingWork()
+    function testInvokingWorkOnlyExposesPlusedVars()
     {
-        $constructor_closure = function(){$x="hello world";};
+        $constructor_closure = function(){
+            +$x="hello world";
+            $y = 42;
+        };
         $work = new Work($constructor_closure);
         $result = $work();
         $this->assertSame(array('x'=>'hello world'), $result,
