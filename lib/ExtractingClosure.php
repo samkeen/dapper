@@ -46,7 +46,7 @@ class ExtractingClosure {
 	
 	/**
 	 * This is where things get a little crazy
-	 * Take the closure supplied in the doWork call
+	 * Take the closure supplied in the constructor
 	 *  - Steal its lines of code
 	 *  - append $this->extraction_statement to the closure's lines of code
 	 *  - use these lines of code to eval a new closure with
@@ -84,7 +84,7 @@ class ExtractingClosure {
         return $this->exposed_var_names;
     }
     
-    private function build_closure_code_string($closure_uses)
+    function build_closure_code_string($closure_uses)
     {
         $use_statement = $this->closure_use_statement(array_keys($closure_uses));
         $closure_append = "\n".trim($this->extraction_statement,"\n; ").";\n";
@@ -99,7 +99,7 @@ class ExtractingClosure {
             /*
              * extract any found (+) notated variables
              */
-            if(preg_match_all('/\+ ?\$(?P<var_name>\w+)/', $code_line, $expose_variables_match))
+            if(preg_match_all('/^[\t\s]*\+[\t\s]*\$(?P<var_name>\w+)/', $code_line, $expose_variables_match))
             {
                 $this->exposed_var_names = array_merge(
                     $this->exposed_var_names, 

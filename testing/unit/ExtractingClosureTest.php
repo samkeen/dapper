@@ -8,14 +8,14 @@ require_once __DIR__ . "/../BaseCase.php";
  */
 class ExtractingClosureTest extends \BaseCase {
 
-    public function testConstructNoExplosions()
+    function testConstructNoExplosions()
     {
         new ExtractingClosure(function(){});
         // Success, no errors
         $this->assertTrue(true);
     }
     
-    public function testEmptyInitClosureExtractsEmptyArray()
+    function testEmptyInitClosureExtractsEmptyArray()
     {
         $init_closure = function(){};
         $extracto = new ExtractingClosure($init_closure);
@@ -25,7 +25,7 @@ class ExtractingClosureTest extends \BaseCase {
             'Since $init_closure = function(){}; the extraction should deliver an empty'
             .' array not ['.print_r($extraction,true).']');
     }
-    public function testInitClosureWithScalarInScopeExtractedToArray()
+    function testInitClosureWithScalarInScopeExtractedToArray()
     {
         $init_closure = function(){ $x = 1;};
         $extracto = new ExtractingClosure($init_closure);
@@ -35,7 +35,7 @@ class ExtractingClosureTest extends \BaseCase {
             'Since $init_closure = function(){$x = 1;}; the extraction should deliver'
             .' array("x"=>1) not ['.print_r($extraction,true).']');
     }
-    public function testInitClosureWithScalarVarTypeIsPreservedInExtraction()
+    function testInitClosureWithScalarVarTypeIsPreservedInExtraction()
     {
         $init_closure = function(){ $x = 1;};
         $extracto = new ExtractingClosure($init_closure);
@@ -45,7 +45,7 @@ class ExtractingClosureTest extends \BaseCase {
             'The returned value of $x should have been and integer'
             .' $x: ['.print_r($extraction['x'], true).']');
     }
-    public function testInitClosureWithNonScalarExtraction()
+    function testInitClosureWithNonScalarExtraction()
     {
         $init_closure = function(){ 
             $array = array('one');
@@ -62,7 +62,7 @@ class ExtractingClosureTest extends \BaseCase {
             .' $array: ['.print_r($extraction['date'], true).']');
     }
     
-    public function testEmptyInitClosureSentScopeVarsExtractionReturnsScopeVars()
+    function testEmptyInitClosureSentScopeVarsExtractionReturnsScopeVars()
     {
         $init_closure = function(){};
         $scope_var = array('x' => 'Hello World');
@@ -74,7 +74,7 @@ class ExtractingClosureTest extends \BaseCase {
             .' array("x" => "Hello World") not ['.print_r($extracting_closure(), true).']');
     }
     
-    public function testInitClosureHasAccessToScopeVars()
+    function testInitClosureHasAccessToScopeVars()
     {
         $init_closure = function(){
             $message = "Hello {$x}";
@@ -93,7 +93,7 @@ class ExtractingClosureTest extends \BaseCase {
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testProtectedScopeVarNamesDissalowed()
+    function testProtectedScopeVarNamesDissalowed()
     {
         $init_closure = function(){};
         $scope_var = array('this' => 'should not take over $this');
@@ -103,7 +103,7 @@ class ExtractingClosureTest extends \BaseCase {
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testNonValidScopeVarNamesDissalowed()
+    function testNonValidScopeVarNamesDissalowed()
     {
         $init_closure = function(){};
         $scope_var = array('2b' => '2b is not a valid var name');
@@ -113,11 +113,87 @@ class ExtractingClosureTest extends \BaseCase {
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testNonValidScopeVarNameDigitsDissalowed()
+    function testNonValidScopeVarNameDigitsDissalowed()
     {
         $init_closure = function(){};
         $scope_var = array(0 => '0 is not a valid var name');
         $extracto = new ExtractingClosure($init_closure);
         $extracto->transform($scope_var);
+    }
+    
+    function testNewClosureCodeProperForMinimalClosure()
+    {
+        $init_closure = function(){};
+        $extracto = new ExtractingClosure($init_closure);
+        $closure_code = $extracto->build_closure_code_string(array());
+        $this->assertEquals("function() {\nreturn get_defined_vars();\n}", $closure_code);
+    }
+    function testNewClosureCodeProperForSingleAssignmentClosure()
+    {
+        $init_closure = function(){$x = 1;};
+        $extracto = new ExtractingClosure($init_closure);
+        $closure_code = $extracto->build_closure_code_string(array());
+        $this->assertEquals("function() {\$x = 1;\nreturn get_defined_vars();\n}", $closure_code);
+    }
+    function testNewClosureCodeProperForSingleAssignmentWithPlusMarkClosure()
+    {
+        $init_closure = function(){+$x = 1;};
+        $extracto = new ExtractingClosure($init_closure);
+        $closure_code = $extracto->build_closure_code_string(array());
+        $this->assertEquals("function() {+\$x = 1;\nreturn get_defined_vars();\n}", $closure_code);
+    }
+    function testExposedVarNmaesEmptyIfNoMarkedVars()
+    {
+        $init_closure = function(){
+            $x = 1;
+            $y = 32;
+        };
+        $extracto = new ExtractingClosure($init_closure);
+        $extracto->transform(array());
+        $this->assertEmpty($extracto->exposed_var_names());
+    }
+    function testTransformExposesSingleMarkedAssignment()
+    {
+        $init_closure = function(){
+            +$x = 1;
+            $y = 42;
+        };
+        $extracto = new ExtractingClosure($init_closure);
+        $extracto->transform(array());
+        $this->assertEquals(array('x'), $extracto->exposed_var_names());
+    }
+    function testTransformExposedForMultipleMarkedAssignments()
+    {
+        $init_closure = function(){
+            +$x = 1;
+            $y = 42;
+            +$z = 99;
+        };
+        $extracto = new ExtractingClosure($init_closure);
+        $extracto->transform(array());
+        $this->assertEquals(array('x', 'z'), $extracto->exposed_var_names());
+    }
+    function testTransformProperlyParsesAdditionMarks()
+    {
+        $init_closure = function(){
+            $x = 32;
+            $y = 42;
+            +$z = $x +$y;
+        };
+        $extracto = new ExtractingClosure($init_closure);
+        $extracto->transform(array());
+        $this->assertEquals(array('z'), $extracto->exposed_var_names());
+    }
+    function testTransformProperlyParsesAdditionMarksWithRegardsToSpacing()
+    {
+        $init_closure = function(){
+        +    $x = 32;
++$y=
+    42;
++            $z = 90;
+        };
+        $extracto = new ExtractingClosure($init_closure);
+        $extracto->transform(array());
+        $this->assertEquals(array('x', 'y', 'z'), $extracto->exposed_var_names());
     }
 }
