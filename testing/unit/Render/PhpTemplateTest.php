@@ -20,7 +20,7 @@ class TwigRenderTest extends \BaseCase {
         $php_template = new PhpTemplate(
             array('template_dir' => TOP_DIR.'/testing/mocks/view_templates'));
         ob_start();
-        $php_template->render_view('users', array('test_message_var' => 'hello'));
+        $php_template->render_result('users', array('test_message_var' => 'hello'));
         $rendered_view = ob_get_clean();
         $this->assertEquals(
             "This is a test View\nThe \$test_message_var is [hello]",

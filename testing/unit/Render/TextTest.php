@@ -19,7 +19,7 @@ class TextTest extends \BaseCase {
     {
         $php_template = new Text(array());
         ob_start();
-        $php_template->render_view('users', array('test_message_var' => 'hello'));
+        $php_template->render_result('users', array('test_message_var' => 'hello'));
         $rendered_view = ob_get_clean();
         $this->assertEquals(
             "View: users\narray (\n  'test_message_var' => 'hello',\n)",

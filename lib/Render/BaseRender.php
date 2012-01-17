@@ -9,6 +9,7 @@
  * 
  */
 namespace dapper\Render;
+use dapper\Env;
 
 /**
  * @package dapper
@@ -17,47 +18,38 @@ namespace dapper\Render;
 abstract class BaseRender
 {
     /**
-     * @var array
-     */
-    protected $config;
-    /**
      * Some Renders display 'sent' headers in some way.  As the Responders 'sends'
      * headers it records them on the Render via record_response_header()
      * @var array
      */
     protected $response_headers;
-    
-    function __construct(array $config=array())
-    {
-        $this->config = $config;
-    }
+    /**
+     * @var \dapper\Env
+     */
+    protected $env;
+    /**
+     * @var mixed
+     */
+    protected $response_content;
 
-    /**
-     * @abstract
-     * @param string $view_name
-     * @param array $payload
-     */
-    abstract function render_view($view_name, array $payload=array());
-    /**
-     * @abstract
-     * @param int $error_code
-     * @param string $error_message
-     */
-    abstract function render_error($error_code, $error_message);
-    function record_response_header($response_code, $header_text, $response_message)
+    function __construct(Env $env)
     {
-        $this->response_headers[$response_code][] = array(
-            'response_code'    => $response_code,
-            'header_text'      => $header_text,
-            'response_message' => $response_message,
-        );
+        $this->env = $env;
     }
     /**
-     * getter for $this->response_headers;
+     * @abstract
      * @return array
      */
-    function response_headers()
-    {
-        return $this->response_headers;
-    }
+    abstract function get_headers();
+    /**
+     * @abstract
+     * @param string $response_content
+     */
+    abstract function init_response($response_content);
+    /**
+     * This is where we typically echo output
+     * @abstract
+     * 
+     */
+    abstract function send_response();
 }

@@ -10,15 +10,35 @@
 namespace dapper\Responder;
 
 /**
+ * Responders use:
+ * 
+ * Templatizers : TemplateEngine injected in constructor
+ *   and 
+ * Formatters : formatter determined by optional URI extension (i.e. /users/1.say)
+ *              Responders have a default format (htm in the case of the HttpResponder)
+ * 
  * @package dapper
  * @subpackage Responder
  */
 class HttpResponder extends BaseResponder
 {
+
+    protected function supported_formats()
+    {
+        return array('htm', 'json', 'xml');
+    }
     
+    function render_response($response_content)
+    {
+        /*
+         * For a RendererThatSupports HTTP, get any custom headers 
+         */
+        $this->renderer->init_response($response_content);
+        $this->send_header(200, $this->renderer->get_headers());
+        return $this->renderer->send_response();
+    }
 
-
-    protected function send_header($response_code, $header_text)
+    protected function send_header($response_code, $headers_text)
     {
         if(headers_sent($file, $line))
         {
@@ -28,14 +48,19 @@ class HttpResponder extends BaseResponder
         }
         else
         {
-            if ($this->env->is_cgi_request())
+            $headers_text = (array)$headers_text;
+            foreach($headers_text as $header_text)
             {
-                header($header_text, true);
+                if ($this->env->is_cgi_request())
+                {
+                    header($header_text, true);
+                }
+                else
+                {
+                    header($header_text, true, $response_code);
+                }
             }
-            else
-            {
-                header($header_text, true, $response_code);
-            }
+            
         }
     }
 

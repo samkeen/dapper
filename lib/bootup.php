@@ -6,7 +6,7 @@ namespace dapper;
 require_once __DIR__ . "/Env.php";
 spl_autoload_register(__NAMESPACE__ .'\Env::autoload');
 
-$env = new Env($is_dev = true);
+$env = new Env($writatble_dir = realpath(__DIR__."/../cache_write"), $is_dev = true);
 
 /**
  * index.php method
@@ -44,7 +44,7 @@ function with($route)
 			function() use($router_instance, $env)
 			{
                 $top_dir = realpath(__DIR__."/..");
-                $render_strategy = new Render\TwigTemplate(
+                $render_strategy = new TemplateEngine\Twig(
                     array(
                         'cache' 			=> "{$top_dir}/cache_write/twig_cache",
                         'auto_reload' 		=> true,
@@ -55,6 +55,9 @@ function with($route)
                     "{$top_dir}/templates",
                     "{$top_dir}/vendors/twig/lib/Twig/Autoloader.php"
                 );
+                /**
+                 * @TODO Need to determine Responder Type at runtime
+                 */
                 $responder = new Responder\HttpResponder(
                     $router_instance,
                     $render_strategy,
