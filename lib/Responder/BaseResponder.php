@@ -10,7 +10,7 @@
 namespace dapper\Responder;
 use dapper\Env;
 use dapper\Router;
-use dapper\Render\BaseRender;
+use dapper\TemplateEngine\BaseTemplateEngine;
 
 /**
  * @package dapper
@@ -63,9 +63,17 @@ abstract class BaseResponder
      */
     protected $router;
     /**
+     * @var \dapper\TemplateEngine\BaseTemplateEngine
+     */
+    protected $template;
+    /**
      * @var \dapper\Render\BaseRender
      */
-    protected $render;
+    protected $renderer;
+    /**
+     * @var string (i.e. 'htm', 'json')
+     */
+    protected $requested_format;
     /**
      * @var \dapper\Env
      */
@@ -73,26 +81,64 @@ abstract class BaseResponder
     
     /**
      * @param \dapper\Router $router
-     * @param \dapper\Render\BaseRender $render
+     * @param \dapper\TemplateEngine\BaseTemplateEngine $template
      * @param \dapper\Env $env
      */
-    function __construct(Router $router, BaseRender $render, Env $env)
+    function __construct(Router $router, BaseTemplateEngine $template, Env $env)
     {
-        $this->router = $router;
-        $this->render = $render;
-        $this->env = $env;
+        $this->router   = $router;
+        $this->template = $template;
+        $this->env      = $env;
+        $this->requested_format = $env->requested_format();
+        $this->construct_renderer();        
     }
+    /**
+     * @abstract
+     * @return array An array of supported formats.
+     * i.e. array('htm', 'json')
+     */
+    protected abstract function supported_formats(); 
+    
+    protected function responds_to_format($format)
+    {
+        return in_array($format, $this->supported_formats());
+    }
+    
+    protected function construct_renderer()
+    {
+        if($this->responds_to_format($this->requested_format))
+        {
+            $renderer_for_format = 
+                '\dapper\Render\\'.ucfirst(strtolower($this->requested_format))."Renderer";
+            $this->renderer = new $renderer_for_format($this->env);
+        }
+        else
+        {
+            throw new \Exception("Format: [{$this->requested_format}] not supported");
+        }
+    }
+    
+    protected abstract function render_response($response_content);
     
     function complete()
     {
         if($route = $this->router->match_route())
         {
+            $view_name        = $route->view_name();
+            $template_payload = $route->response_payload();
             // @TODO convert errors to exceptions
             try
             {
-                $view_name        = $route->view_name();
-                $template_payload = $route->response_payload();
-                $this->render->render_view($view_name, $template_payload);
+                /*
+                 * Templates are only applied if there is one present for the
+                 * requested format (i.e. hello.htm.twig).
+                 * Else, the pure data is passed to the Formatter.
+                 * 
+                 */
+                $templated_content = $this->template->templatize(
+                    $view_name, $this->requested_format, $template_payload
+                );
+                return $this->render_response($templated_content);
             }
             catch(\Exception $e) 
             {
@@ -118,7 +164,7 @@ abstract class BaseResponder
                 $message .= "Known Routes:\n";
                 $message .= print_r($this->router->learned_routes(), true);
                 $message .= "\n";
-                $this->render->render_error(404, $message);
+                $this->template->render_error(404, $message);
             }
         }
     }
@@ -129,16 +175,12 @@ abstract class BaseResponder
     function error_response($response_code, $response_message=null)
     {
         $this->invoke_header($response_code, $response_message);
-        $this->render->render_error($response_code, $response_message);
+        $this->template->render_error($response_code, $response_message);
     }
-    
+
     protected function invoke_header($response_code, $response_message=null)
     {
         $header_text = $this->construct_response_header_text($response_code);
-        /*
-         * some but not all render engines will render the sent headers in some way
-         */
-        $this->render->record_response_header($response_code, $header_text, $response_message);
         $this->send_header($response_code, $header_text);
     }
     
