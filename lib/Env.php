@@ -49,7 +49,6 @@ class Env
             {
                 echo "USAGE:php index.php {method} {path}\n\n"; 
                 echo "ex: php index.php GET /user/42\n\n";
-                exit(1);
             }
             $this->request_method = isset($argv[1]) ? $argv[1] : null;
             $this->request_path   = isset($argv[2]) ? $argv[2] : null;

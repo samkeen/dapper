@@ -101,7 +101,6 @@ class EnvTest extends \BaseCase {
         new EnvMock();
         $output = ob_get_clean();
         $this->assertRegExp('/USAGE:/', $output);
-        $this->assertRegExp('/WARN:/', $output);
     }
     function testCommandLineSetsExpectedMethodAndPath()
     {
