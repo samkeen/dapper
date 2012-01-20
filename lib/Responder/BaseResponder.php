@@ -160,7 +160,7 @@ abstract class BaseResponder
             if($this->env->is_dev())
             {
                 $requested_route = $this->router->requested_route();
-                $message = "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
+                $message  = "Requested Route [{$requested_route->http_method()} {$requested_route->path()}] not found\n";
                 $message .= "Known Routes:\n";
                 $message .= print_r($this->router->learned_routes(), true);
                 $message .= "\n";

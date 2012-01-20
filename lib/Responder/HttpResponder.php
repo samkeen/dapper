@@ -30,20 +30,29 @@ class HttpResponder extends BaseResponder
     
     function render_response($response_content)
     {
+        function render_response($response_content)
+        {
         /*
-         * For a RendererThatSupports HTTP, get any custom headers 
-         */
+         * ex $this->renderer would be HtmRenderer
+         * 
+         */ 
         $this->renderer->init_response($response_content);
+        /*
+         * this allows a renderer to send things such as Content-type headers
+         */
         $this->send_header(200, $this->renderer->get_headers());
+        /*
+         * this is typically where the renderer would echo the content
+         */
         return $this->renderer->send_response();
+        }
     }
 
     protected function send_header($response_code, $headers_text)
     {
         if(headers_sent($file, $line))
         {
-            // @TODO build a logger 
-            // @see https://github.com/samkeen/dapper/issues/9
+            // @TODO build a logger : https://github.com/samkeen/dapper/issues/9
 //            Env::log()->error(__METHOD__."  Headers already sent from {$file}::{$line}");
         }
         else
