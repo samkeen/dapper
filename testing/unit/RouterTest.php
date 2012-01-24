@@ -3,53 +3,53 @@ namespace dapper;
 require_once __DIR__ . "/../BaseCase.php";
 
 class RouterTest extends \BaseCase {
-	
-	/**
-	 * @var Router
-	 */
-	private $router;
-	
-	protected function setUp()
-	{
-		parent::setUp();
-		$this->router = new Router(
+    
+    /**
+     * @var Router
+     */
+    private $router;
+    
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->router = new Router(
             new Route(
                 "get",
                 '/user',
                 $is_request_route=true
             )
         );
-	}
+    }
     
     /**
      * @expectedException \InvalidArgumentException
      */
     function testAppendRouteThrowsProperExceptionForInvalidHttpMethod()
     {
-        $this->router->append_route('FU /');		
+        $this->router->append_route('FU /');        
     }
-		
-	/**
+        
+    /**
      * @expectedException dapper\Exception\InvalidStateException
      */
     function testDo_workInvalidStateExceptionThrown()
     {
-		$this->router
-			->do_work(function(){});
+        $this->router
+            ->do_work(function(){});
     }
-	
-	function testDo_workArrivesOnLastRoute()
-	{
-		$other_work = function(){$x=1;};
-		$work_for_last_route = function(){};
-		$this->router
-			->append_route('GET /123')
-			->do_work($other_work)
-			->append_route('GET /abc')
-			->do_work($work_for_last_route);
-		$initial_workload = $this->router->last_learned_route()->work()->closure();
-		$this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $this->core->do_work($work)'
-			.' should be the same work returned by $this->core->last_learned_route()->work()->closure()');
+    
+    function testDo_workArrivesOnLastRoute()
+    {
+        $other_work = function(){$x=1;};
+        $work_for_last_route = function(){};
+        $this->router
+            ->append_route('GET /123')
+            ->do_work($other_work)
+            ->append_route('GET /abc')
+            ->do_work($work_for_last_route);
+        $initial_workload = $this->router->last_learned_route()->work()->closure();
+        $this->assertSame($work_for_last_route, $initial_workload, 'The provided work to $this->core->do_work($work)'
+            .' should be the same work returned by $this->core->last_learned_route()->work()->closure()');
     }
 
     /**
@@ -57,29 +57,29 @@ class RouterTest extends \BaseCase {
      */
     function testBlindCallToRenderThrowsException()
     {
-		$this->router
-			->render('bob');
+        $this->router
+            ->render('bob');
     }
-	
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
-	function testEmptyCallToRenderThrowsException()
-	{
-		$this->router
-			->append_route('GET /abc')
-			->render('');
-	}
-	
-	function testRenderViewLandsOnLastRoute()
-	{
-		$this->router
-			->append_route('GET /ted')
-			->render('ted')
-			->append_route('GET /bob')
-			->render('bob');
-		$this->assertEquals('bob', $this->router->last_learned_route()->view_name());
-	}
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    function testEmptyCallToRenderThrowsException()
+    {
+        $this->router
+            ->append_route('GET /abc')
+            ->render('');
+    }
+    
+    function testRenderViewLandsOnLastRoute()
+    {
+        $this->router
+            ->append_route('GET /ted')
+            ->render('ted')
+            ->append_route('GET /bob')
+            ->render('bob');
+        $this->assertEquals('bob', $this->router->last_learned_route()->view_name());
+    }
 
 
     /**
@@ -88,48 +88,48 @@ class RouterTest extends \BaseCase {
     function testAppendRouteThrowExceptionForUnknowHttpMethod()
     {
         $this->router
-			->append_route('FU /');
+            ->append_route('FU /');
     }
-	/**
+    /**
      * @expectedException \InvalidArgumentException
      */
     function testAppendRouteThrowExceptionForMissingPath()
     {
         $this->router
-			->append_route('GET');
+            ->append_route('GET');
     }
-	/**
+    /**
      * @expectedException \InvalidArgumentException
      */
     function testAppendRouteThrowExceptionForMissingHttpMethod()
     {
         $this->router
-			->append_route('/user');
+            ->append_route('/user');
     }
 
     function testAppendRouteHttpMethodAndPathProperlyParsed()
     {
         $last_route = $this->router
-			->append_route('GET /user')
-			->last_learned_route();
-		$this->assertEquals('GET', $last_route->http_method(),"The last route should be"
-			. " the one defined by ->append_route() so it http_method should be GET and"
-			. " controller_name should be user");
-		$this->assertEquals('user', $last_route->controller_name(),"The last route should be"
-			. " the one defined by ->append_route() so it http_method should be GET and"
-			. " controller_name should be user");
+            ->append_route('GET /user')
+            ->last_learned_route();
+        $this->assertEquals('GET', $last_route->http_method(),"The last route should be"
+            . " the one defined by ->append_route() so it http_method should be GET and"
+            . " controller_name should be user");
+        $this->assertEquals('user', $last_route->controller_name(),"The last route should be"
+            . " the one defined by ->append_route() so it http_method should be GET and"
+            . " controller_name should be user");
     }
-	
-	function testAppendRoutePathSegemntsProperlyParsed()
-	{
-		$last_route = $this->router
-			->append_route('GET /user/:id/:location')
-			->last_learned_route();
-		$this->assertEquals(array(':id', ':location'), $last_route->uri_path_segments(),
-			"The last route should be"
-			. " the one defined by ->append_route() so its uri_path_segments should be "
-			. " array(':id', ':location')");
-	}
+    
+    function testAppendRoutePathSegemntsProperlyParsed()
+    {
+        $last_route = $this->router
+            ->append_route('GET /user/:id/:location')
+            ->last_learned_route();
+        $this->assertEquals(array(':id', ':location'), $last_route->uri_path_segments(),
+            "The last route should be"
+            . " the one defined by ->append_route() so its uri_path_segments should be "
+            . " array(':id', ':location')");
+    }
     
     function testRequestedRouteReturnsRouteFromCintructor()
     {
@@ -183,7 +183,7 @@ class RouterTest extends \BaseCase {
         $this->assertEquals('GET',$matched_route->http_method());
         $this->assertEquals('user',$matched_route->controller_name());
     }
-	
+    
     function testRequestPathParamsReturnsEmptyArrayIfNoParamsSignified()
     {
         $router = new Router(
@@ -237,7 +237,7 @@ class RouterTest extends \BaseCase {
         $matched_route = $router->match_route();
         $this->assertEquals(array(':id' => 42, ':style' => null), $matched_route->mapped_path_param_values());
     }
-	
-	
+    
+    
 }
  

@@ -128,15 +128,15 @@
 
  <target name="phpdoc" description="Generate API documentation using PHPDocumentor">
   <exec executable="phpdoc">
-	<arg value="--directory" />
-	<arg path="${libdir}" />
-	<arg value="--ignore" />
-	<arg value="autoload.php" />
-	<arg value="--target" />
-	<arg path="${testdir}/build/api" />
+    <arg value="--directory" />
+    <arg path="${libdir}" />
+    <arg value="--ignore" />
+    <arg value="autoload.php" />
+    <arg value="--target" />
+    <arg path="${testdir}/build/api" />
   </exec>
  </target>
-	
+    
  <target name="phpcb"
          description="Aggregate tool output with PHP_CodeBrowser">
   <exec executable="phpcb">

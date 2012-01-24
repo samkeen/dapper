@@ -3,8 +3,8 @@ namespace dapper;
 require_once __DIR__ . "/../BaseCase.php";
 
 class WorkTest extends \BaseCase {
-	
-	function testInstantiateNoErrors()
+    
+    function testInstantiateNoErrors()
     {
         new Work(function(){});
         // Success, no errors

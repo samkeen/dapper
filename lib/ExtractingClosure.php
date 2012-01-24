@@ -9,7 +9,7 @@ namespace dapper;
  */
 class ExtractingClosure {
     
-	/**
+    /**
      * Protect $this + the internal vars of ExtractingClosure::transform()
      * 
      * @var array
@@ -21,63 +21,63 @@ class ExtractingClosure {
         '__closure'
     );
     
-	/**
-	 * This is the statement that is added to the Closure in order
-	 * to export its variables
-	 * 
-	 * @var string
-	 */
-	private $extraction_statement = "return get_defined_vars()";
+    /**
+     * This is the statement that is added to the Closure in order
+     * to export its variables
+     * 
+     * @var string
+     */
+    private $extraction_statement = "return get_defined_vars()";
     
-	/**
-	 * @var \Closure
-	 */
-	private $initial_closure;
+    /**
+     * @var \Closure
+     */
+    private $initial_closure;
     /**
      * @var array
      */
     private $exposed_var_names = array();
-	
-	function __construct(\Closure $initial_closure)
-	{
-		$this->initial_closure = $initial_closure;
-	}
+    
+    function __construct(\Closure $initial_closure)
+    {
+        $this->initial_closure = $initial_closure;
+    }
 
-	
-	/**
-	 * This is where things get a little crazy
-	 * Take the closure supplied in the constructor
-	 *  - Steal its lines of code
-	 *  - append $this->extraction_statement to the closure's lines of code
-	 *  - use these lines of code to eval a new closure with
-	 *    use ($param) added.
-	 * 
-	 * @param array $__closure_uses 
-	 * ex: array(
-	 *   'path' => array(
-	 *     ':name' => 'bob' 
-	 * )
-	 * Will result in 
-	 * $path = array(':name' => 'bob');
-	 * being defined in this functions namespace and
-	 * 'use ($path)' 
-	 * being included in the construction of the new closure.
-	 * 
-	 * @return \Closure
-	 */
-	function transform(array $__closure_uses = null)
-	{
+    
+    /**
+     * This is where things get a little crazy
+     * Take the closure supplied in the constructor
+     *  - Steal its lines of code
+     *  - append $this->extraction_statement to the closure's lines of code
+     *  - use these lines of code to eval a new closure with
+     *    use ($param) added.
+     * 
+     * @param array $__closure_uses 
+     * ex: array(
+     *   'path' => array(
+     *     ':name' => 'bob' 
+     * )
+     * Will result in 
+     * $path = array(':name' => 'bob');
+     * being defined in this functions namespace and
+     * 'use ($path)' 
+     * being included in the construction of the new closure.
+     * 
+     * @return \Closure
+     */
+    function transform(array $__closure_uses = null)
+    {
         $__closure_uses = (array)$__closure_uses;
         $this->check_dissalowed_keywords($__closure_uses);
         $this->assert_valid_var_names($__closure_uses);
-		// bring params into this namespace
-	    extract($__closure_uses);
-		// construct the use() statement to expose these params to the new closure 
-		$__code = $this->build_closure_code_string($__closure_uses);
-		$__closure = null;
-		eval('namespace '.__NAMESPACE__.'; $__closure = '.$__code.';');
-		return $__closure;
-	}
+        // bring params into this namespace
+        extract($__closure_uses);
+        // construct the use() statement to expose these params to the new closure 
+        $__code = $this->build_closure_code_string($__closure_uses);
+        $__closure = null;
+        eval('namespace '.__NAMESPACE__.'; $__closure = '.$__code.';');
+        return $__closure;
+    }
     
     function exposed_var_names()
     {
@@ -118,9 +118,9 @@ class ExtractingClosure {
         $code = str_replace('function()','function() '.$use_statement, $code);
         return $code;
     }
-	
-	private function closure_use_statement(array $uses=null)
-	{
+    
+    private function closure_use_statement(array $uses=null)
+    {
         $use_statement = '';
         if($uses)
         {
@@ -128,19 +128,19 @@ class ExtractingClosure {
                 function($val){return "\${$val}";},
                 $uses)).")";
         }
-		return $use_statement;
-	}
-	
-	/**
-	 * @param $code
-	 * @param $path_to_code_file
-	 * @return mixed
-	 */
-	private function replace_constants($code, $path_to_code_file)
-	{
-		$code = str_replace('__DIR__',"'{$path_to_code_file}'", $code);
-		return $code;
-	}
+        return $use_statement;
+    }
+    
+    /**
+     * @param $code
+     * @param $path_to_code_file
+     * @return mixed
+     */
+    private function replace_constants($code, $path_to_code_file)
+    {
+        $code = str_replace('__DIR__',"'{$path_to_code_file}'", $code);
+        return $code;
+    }
     /**
      * When writing the new Closure, this will dissalow things like
      * "function use($this) {" <-putting $this in use() would be bad

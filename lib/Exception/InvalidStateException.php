@@ -11,5 +11,5 @@ namespace dapper\Exception;
  */
 class InvalidStateException extends \Exception
 {
-	
+    
 }

@@ -22,10 +22,10 @@ $env = new Env($writatble_dir = realpath(__DIR__."/../cache_write"), $is_dev = t
 function with($route)
 {
     global $env;
-	static $router_instance;
-	if( ! $router_instance)
-	{
-		$router_instance = new Router(
+    static $router_instance;
+    if( ! $router_instance)
+    {
+        $router_instance = new Router(
             new Route( 
                 $env->request_method(),
                 $env->request_path(),
@@ -37,20 +37,20 @@ function with($route)
          * With the shutdown function in place there is no need for an explicit method call
          * at the end of index.php.
          */
-		register_shutdown_function(
-			/**
-			 * this is where we will invoke the matched route
-			 */
-			function() use($router_instance, $env)
-			{
+        register_shutdown_function(
+            /**
+             * this is where we will invoke the matched route
+             */
+            function() use($router_instance, $env)
+            {
                 $top_dir = realpath(__DIR__."/..");
                 $render_strategy = new TemplateEngine\Twig(
                     array(
-                        'cache' 			=> "{$top_dir}/cache_write/twig_cache",
-                        'auto_reload' 		=> true,
-                        'debug'				=> true,
-                        'strict_variables'	=> true,
-                        'autoescape'		=> true,
+                        'cache'             => "{$top_dir}/cache_write/twig_cache",
+                        'auto_reload'         => true,
+                        'debug'                => true,
+                        'strict_variables'    => true,
+                        'autoescape'        => true,
                     ),
                     "{$top_dir}/templates",
                     "{$top_dir}/vendors/twig/lib/Twig/Autoloader.php"
@@ -64,9 +64,9 @@ function with($route)
                     $env
                 );
                 $responder->complete();
-			}
-		);
-	}
+            }
+        );
+    }
     /**
      * before we append another Route, see if the last appended
      * Route is a match, if so, stop appending routes and exit through
@@ -76,5 +76,5 @@ function with($route)
     {
         exit();
     }
-	return $router_instance->append_route($route);
+    return $router_instance->append_route($route);
 }

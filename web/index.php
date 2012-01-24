@@ -4,10 +4,10 @@ require __DIR__ . "/../lib/bootup.php";
 
 
 with("GET /")
-	->render('example');
+    ->render('example');
 
 with("GET /hello/:name")
-	->do_work(function(){
-		+$message = "Hello {$path[':name']}";
-	})
-	->render('hello');
+    ->do_work(function(){
+        +$message = "Hello {$path[':name']}";
+    })
+    ->render('hello');

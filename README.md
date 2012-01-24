@@ -28,7 +28,7 @@ Or in code:
 ``` php
 <?php
 with("GET /")
-	->render('home');
+    ->render('home');
 
 with("GET /hello/:name")
         ->do_work(function(){
@@ -95,11 +95,11 @@ More TBDocumented
 ``` php
 <?php
 with("GET /")
-	->render('home');
+    ->render('home');
 
 with("GET /hello/:name")
-	->do_work(function(){
-		+$message = "Hello {$path[':name']}";
-	})
-	->render('hello');
+    ->do_work(function(){
+        +$message = "Hello {$path[':name']}";
+    })
+    ->render('hello');
 ```
