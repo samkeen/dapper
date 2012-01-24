@@ -11,7 +11,7 @@ class EnvTest extends \BaseCase {
 	
     function testInstantiateNoErrors()
     {
-        new Env();
+        new Env(sys_get_temp_dir(), true);
         // just a sanity test
         $this->assertTrue(true);
     }
@@ -26,24 +26,24 @@ class EnvTest extends \BaseCase {
 
     function testRequestMethodReturnsNullIfUnknown()
     {
-        $env = new Env();
+        $env = new Env(sys_get_temp_dir(), true);
         $this->assertNull($env->request_method());
     }
     function testRequestMethodReturnsProperValueFromSeverContext()
     {
         $_SERVER['REQUEST_METHOD'] = 'boo';
-        $env = new Env();
+        $env = new Env(sys_get_temp_dir(), true);
         $this->assertEquals('boo', $env->request_method());
     }
     function testRequestPathReturnsNullIfUnknown()
     {
-        $env = new Env();
+        $env = new Env(sys_get_temp_dir(), true);
         $this->assertNull($env->request_path());
     }
     function testRequestPathReturnsProperValueFromRequestContext()
     {
         $_GET[Env::REQUEST_PATH_KEY] = 'boo';
-        $env = new Env();
+        $env = new Env(sys_get_temp_dir(), true);
         $this->assertEquals('boo', $env->request_path());
     }
 
@@ -60,31 +60,31 @@ class EnvTest extends \BaseCase {
     
     function testIsDevReturnsFalseByDefault()
     {
-        $env = new Env();
+        $env = new Env(sys_get_temp_dir());
         $this->assertFalse($env->is_dev());
     }
     
     function testIsDevReturnsTrueViaOptionalConstructorParam()
     {
-        $env = new Env($is_dev = true);
+        $env = new Env(sys_get_temp_dir(), $is_dev = true);
         $this->assertTrue($env->is_dev());
     }
 
     function testIsCliRequestReturnsTrueForAUnitTest()
     {
-        $env = new Env($is_dev = true);
+        $env = new Env(sys_get_temp_dir(), $is_dev = true);
         $this->assertTrue($env->is_cli_request());
     }
 
     public function testIsCgiRequestReturnsFalseForAUnitTest()
     {
-        $env = new Env($is_dev = true);
+        $env = new Env(sys_get_temp_dir(), $is_dev = true);
         $this->assertFalse($env->is_cgi_request());
     }
     
     function testIsCommandLineRequestReturnsFalseForAUnitTest()
     {
-        $env = new Env($is_dev = true);
+        $env = new Env(sys_get_temp_dir(), $is_dev = true);
         $this->assertFalse($env->is_commandline_request());
     }
     
@@ -98,7 +98,7 @@ class EnvTest extends \BaseCase {
         $GLOBALS['argv']=array('index.php');
         $GLOBALS['argc']=count($GLOBALS['argv']);
         ob_start();
-        new EnvMock();
+        new EnvMock(sys_get_temp_dir(), true);
         $output = ob_get_clean();
         $this->assertRegExp('/USAGE:/', $output);
     }
@@ -111,7 +111,7 @@ class EnvTest extends \BaseCase {
         require_once TOP_DIR.'/testing/mocks/EnvMock.php';
         $GLOBALS['argv']=array('index.php', 'get', '/user');
         $GLOBALS['argc']=count($GLOBALS['argv']);
-        $env = new EnvMock();
+        $env = new EnvMock(sys_get_temp_dir(), true);
         
         $this->assertEquals('get', $env->request_method());
         $this->assertEquals('/user', $env->request_path());
