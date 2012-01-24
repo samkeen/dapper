@@ -1,3 +1,8 @@
+## At this point, this is still an experiment.
+
+I do plan to continue to develop Dapper, but it is still in its infancy and is still prone to large implementation changes.
+Once the code base settles down and I get profiling test in place plus better documentation I'll tag a 1.0 release.
+
 ## Goals
 
 * **Compactness and low noise**
