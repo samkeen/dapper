@@ -6,10 +6,10 @@ Once the code base settles down and I get profiling test in place plus better do
 ## Goals
 
 * **Compactness and low noise**
-Acomplish whats needs in a way that makes sense with as little code as possible.
+Accomplish whats needs in a way that makes sense with as little code as possible.
 
 * **Law Of Demeter enforced**
-Classes and methods are small and specific.  Strive to have proper separation of of concernes throughout the codebase.  
+Classes and methods are small and specific.  Strive to have proper separation of of concerns throughout the codebase.  
 
 * **Laziness**
 Do work only when you have to.
@@ -40,14 +40,14 @@ with("GET /hello/:name")
 
 As you can see, closures and a [fluent interface](http://martinfowler.com/bliki/FluentInterface.html) are utilized to provide this syntax in a low noise, elegant way.
 
-This code snippet also demonstrates a notation invented for the framework; placing an addition mark (**+**) infront of a variable assigment.
-
-This (+) syntax was choosen for a couple of reasons
-
-- Reuse, it is used in UML to mark something as 'public'
-- It has no side effect (that i can detect) to the assignemnt statement and the file will still lint (php -l) with no errors.
+This code snippet also demonstrates a notation invented for the framework; placing an addition mark (**+**) in front of a variable assignment.
 
 This has the effect of exposing that particular variable to the view.  So in the case above, `$message` will be exposed to the view, but `$name` will not.
+
+This (+) syntax was chosen for a couple of reasons
+
+- Reuse, it is used in UML to mark something as 'public'
+- It has no side effect (that i can detect) to the assignment statement and the file will still lint (php -l) with no errors.
 
 ## Template Support 
 A pluggable templating system is in place (The Render objects referenced below).
@@ -56,7 +56,7 @@ Possible template strategies range from:
 * none (template-less)
 * plain old php
 * twig
-* anthing that a Render adapter is written for.
+* anything that a Render adapter is written for.
 
 ## ORM support
 This is currently the glaring omission from this framework.  It will be added in a pluggable manner similar to the templating strategy.
