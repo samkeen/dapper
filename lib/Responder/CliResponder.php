@@ -18,5 +18,18 @@ namespace dapper\Responder;
  */
 class CliResponder extends BaseResponder
 {
+    /**
+     * @return array An array of supported formats.
+     * i.e. array('htm', 'json')
+     */
+    protected function supported_formats()
+    {
+        return array('htm', 'json', 'xml');
+    }
+
+    protected function render_response($response_content)
+    {
+        // TODO: Implement render_response() method.
+    }
 
 }
