@@ -40,7 +40,13 @@ with("GET /hello/:name")
 
 As you can see, closures and a [fluent interface](http://martinfowler.com/bliki/FluentInterface.html) are utilized to provide this syntax in a low noise, elegant way.
 
-This code snippet also demonstrates a notation invented for the framework; placing an addition mark (+) infront of a variable assigment.
+This code snippet also demonstrates a notation invented for the framework; placing an addition mark (**+**) infront of a variable assigment.
+
+This (+) syntax was choosen for a couple of reasons
+
+- Reuse, it is used in UML to mark something as 'public'
+- It has no side effect (that i can detect) to the assignemnt statement and the file will still lint (php -l) with no errors.
+
 This has the effect of exposing that particular variable to the view.  So in the case above, `$message` will be exposed to the view, but `$name` will not.
 
 ## Template Support 
