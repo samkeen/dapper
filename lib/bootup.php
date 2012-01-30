@@ -23,6 +23,9 @@ function with($route)
 {
     global $env;
     static $router_instance;
+    /*
+     * maintain a single instance of Router
+     */
     if( ! $router_instance)
     {
         $router_instance = new Router(

@@ -88,7 +88,7 @@ class Env
     }
     function requested_format()
     {
-        return $this->path_extension;
+        return $this->requested_format;
     }
     
     static function log($message)

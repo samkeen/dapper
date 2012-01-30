@@ -28,10 +28,9 @@ class HttpResponder extends BaseResponder
         return array('htm', 'json', 'xml');
     }
     
+
     function render_response($response_content)
     {
-        function render_response($response_content)
-        {
         /*
          * ex $this->renderer would be HtmRenderer
          * 
@@ -45,8 +44,8 @@ class HttpResponder extends BaseResponder
          * this is typically where the renderer would echo the content
          */
         return $this->renderer->send_response();
-        }
     }
+    
 
     protected function send_header($response_code, $headers_text)
     {
