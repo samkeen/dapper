@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="WOPR" default="build">
+<project name="Dapper" default="build">
  <target name="build"
    depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit,phpdoc,phpcb"/>
 
-  <property name="topdir"  value="${basedir}/.." />
+  <property name="topdir"  value="${basedir}" />
   <property name="testdir" value="${topdir}/testing" />
+  <property name="builddir" value="${topdir}/build" />
   <property name="libdir"  value="${topdir}/lib" />
 
 
@@ -26,20 +27,20 @@
  </target>
 
  <target name="clean" description="Cleanup build artifacts">
-  <delete dir="${testdir}/build/api"/>
-  <delete dir="${testdir}/build/code-browser"/>
-  <delete dir="${testdir}/build/coverage"/>
-  <delete dir="${testdir}/build/logs"/>
-  <delete dir="${testdir}/build/pdepend"/>
+  <delete dir="${builddir}/api"/>
+  <delete dir="${builddir}/code-browser"/>
+  <delete dir="${builddir}/coverage"/>
+  <delete dir="${builddir}/logs"/>
+  <delete dir="${builddir}/pdepend"/>
  </target>
 
  <target name="prepare" depends="clean"
          description="Prepare for build">
-  <mkdir dir="${testdir}/build/api"/>
-  <mkdir dir="${testdir}/build/code-browser"/>
-  <mkdir dir="${testdir}/build/coverage"/>
-  <mkdir dir="${testdir}/build/logs"/>
-  <mkdir dir="${testdir}/build/pdepend"/>
+  <mkdir dir="${builddir}/api"/>
+  <mkdir dir="${builddir}/code-browser"/>
+  <mkdir dir="${builddir}/coverage"/>
+  <mkdir dir="${builddir}/logs"/>
+  <mkdir dir="${builddir}/pdepend"/>
  </target>
 
  <target name="lint">
@@ -59,7 +60,7 @@
  <target name="phploc" description="Measure project size using PHPLOC">
   <exec executable="phploc">
    <arg value="--log-csv" />
-   <arg value="${testdir}/build/logs/phploc.csv" />
+   <arg value="${builddir}/logs/phploc.csv" />
    <arg path="${libdir}" />
   </exec>
  </target>
@@ -67,9 +68,9 @@
  <target name="pdepend"
          description="Calculate software metrics using PHP_Depend">
   <exec executable="pdepend">
-   <arg value="--jdepend-xml=${testdir}/build/logs/jdepend.xml" />
-   <arg value="--jdepend-chart=${testdir}/build/pdepend/dependencies.svg" />
-   <arg value="--overview-pyramid=${testdir}/build/pdepend/overview-pyramid.svg" />
+   <arg value="--jdepend-xml=${builddir}/logs/jdepend.xml" />
+   <arg value="--jdepend-chart=${builddir}/pdepend/dependencies.svg" />
+   <arg value="--overview-pyramid=${builddir}/pdepend/overview-pyramid.svg" />
    <arg path="${libdir}" />
   </exec>
  </target>
@@ -79,7 +80,7 @@
   <exec executable="phpmd">
    <arg path="${libdir}" />
    <arg value="text" />
-   <arg value="${testdir}/build/phpmd.xml" />
+   <arg value="${builddir}/phpmd.xml" />
   </exec>
  </target>
 
@@ -88,16 +89,16 @@
   <exec executable="phpmd">
    <arg path="${libdir}" />
    <arg value="xml" />
-   <arg value="${testdir}/build/phpmd.xml" />
+   <arg value="${builddir}/phpmd.xml" />
    <arg value="--reportfile" />
-   <arg value="${testdir}/build/logs/pmd.xml" />
+   <arg value="${builddir}/logs/pmd.xml" />
   </exec>
  </target>
 
  <target name="phpcs"
          description="Find coding standard violations using PHP_CodeSniffer">
   <exec executable="phpcs">
-   <arg value="--standard=${testdir}/build/phpcs.xml" />
+   <arg value="--standard=${builddir}/phpcs.xml" />
    <arg value="--ignore=autoload.php" />
    <arg path="${libdir}" />
   </exec>
@@ -107,8 +108,8 @@
          description="Find coding standard violations using PHP_CodeSniffer">
   <exec executable="phpcs" output="/dev/null">
    <arg value="--report=checkstyle" />
-   <arg value="--report-file=${testdir}/build/logs/checkstyle.xml" />
-   <arg value="--standard=${testdir}/build/phpcs.xml" />
+   <arg value="--report-file=${builddir}/logs/checkstyle.xml" />
+   <arg value="--standard=${builddir}/phpcs.xml" />
    <arg value="--ignore=autoload.php" />
    <arg path="${libdir}" />
   </exec>
@@ -117,7 +118,7 @@
  <target name="phpcpd" description="Find duplicate code using PHPCPD">
   <exec executable="phpcpd">
    <arg value="--log-pmd" />
-   <arg value="${testdir}/build/logs/pmd-cpd.xml" />
+   <arg value="${builddir}/logs/pmd-cpd.xml" />
    <arg path="${libdir}" />
   </exec>
  </target>
@@ -133,7 +134,7 @@
     <arg value="--ignore" />
     <arg value="autoload.php" />
     <arg value="--target" />
-    <arg path="${testdir}/build/api" />
+    <arg path="${builddir}/api" />
   </exec>
  </target>
     
@@ -141,11 +142,11 @@
          description="Aggregate tool output with PHP_CodeBrowser">
   <exec executable="phpcb">
    <arg value="--log" />
-   <arg path="${testdir}/build/logs" />
+   <arg path="${builddir}/logs" />
    <arg value="--source" />
    <arg path="${libdir}" />
    <arg value="--output" />
-   <arg path="${testdir}/build/code-browser" />
+   <arg path="${builddir}/code-browser" />
   </exec>
  </target>
 </project>
