@@ -88,6 +88,16 @@ Example Responders are HTTP and CLI.
 * `Render`
 Used by Responder to combine the data (result of the Route's work) with a view.
 
+## Install 
+
+```
+git clone git@github.com:samkeen/dapper.git
+cd dapper
+chmod -R 777 cache_write
+```
+
+go to http://localhost/dapper/web
+
 ## Examples
 
 More TBDocumented
