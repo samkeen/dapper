@@ -1,8 +1,8 @@
 /.idea
 /.DS_store
-/cache_write/*
 /testing/build/api
 /testing/build/code-browser
 /testing/build/coverage
 /testing/build/logs
 /testing/build/pdepend
+/cache_write/twig_cache/**/**/*.php
