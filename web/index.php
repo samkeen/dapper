@@ -1,6 +1,6 @@
 <?php
 namespace dapper;
-require __DIR__ . "/../lib/bootup.php";
+require __DIR__ . "/../src/bootup.php";
 
 
 with("GET /")

@@ -2,7 +2,7 @@
 /**
  * 
  */
-require __DIR__ . "/../lib/Env.php";
+require __DIR__ . "/../src/Env.php";
 spl_autoload_register('dapper\Env::autoload');
  ! defined('TOP_DIR')? define('TOP_DIR', realpath(__DIR__."/..")):null;
 

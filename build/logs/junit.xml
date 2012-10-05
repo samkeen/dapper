@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="Dapper" tests="73" assertions="89" failures="0" errors="0" time="0.188821">
-    <testsuite name="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" namespace="dapper" fullPackage="dapper" tests="14" assertions="15" failures="0" errors="0" time="0.033371">
-      <testcase name="testInstantiateNoErrors" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="12" assertions="1" time="0.002526"/>
-      <testcase name="testAutoloadGetFalseForNonExistentClass" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="18" assertions="1" time="0.001803"/>
-      <testcase name="testAutoloadGetNotFalseForNonExistentClass" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="22" assertions="1" time="0.001720"/>
-      <testcase name="testRequestMethodReturnsNullIfUnknown" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="27" assertions="1" time="0.001887"/>
-      <testcase name="testRequestMethodReturnsProperValueFromSeverContext" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="32" assertions="1" time="0.009117"/>
-      <testcase name="testRequestPathReturnsNullIfUnknown" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="38" assertions="1" time="0.001483"/>
-      <testcase name="testRequestPathReturnsProperValueFromRequestContext" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="43" assertions="1" time="0.001988"/>
-      <testcase name="testIsDevReturnsFalseByDefault" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="61" assertions="1" time="0.001515"/>
-      <testcase name="testIsDevReturnsTrueViaOptionalConstructorParam" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="67" assertions="1" time="0.001478"/>
-      <testcase name="testIsCliRequestReturnsTrueForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="73" assertions="1" time="0.001444"/>
-      <testcase name="testIsCgiRequestReturnsFalseForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="79" assertions="1" time="0.001440"/>
-      <testcase name="testIsCommandLineRequestReturnsFalseForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="85" assertions="1" time="0.001500"/>
-      <testcase name="testCommandLineSendUsageError" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="91" assertions="1" time="0.002235"/>
-      <testcase name="testCommandLineSetsExpectedMethodAndPath" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="105" assertions="2" time="0.003235"/>
+  <testsuite name="Dapper" tests="73" assertions="89" failures="0" errors="0" time="0.188744">
+    <testsuite name="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" namespace="dapper" fullPackage="dapper" tests="14" assertions="15" failures="0" errors="0" time="0.033439">
+      <testcase name="testInstantiateNoErrors" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="12" assertions="1" time="0.002575"/>
+      <testcase name="testAutoloadGetFalseForNonExistentClass" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="18" assertions="1" time="0.001830"/>
+      <testcase name="testAutoloadGetNotFalseForNonExistentClass" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="22" assertions="1" time="0.001734"/>
+      <testcase name="testRequestMethodReturnsNullIfUnknown" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="27" assertions="1" time="0.001923"/>
+      <testcase name="testRequestMethodReturnsProperValueFromSeverContext" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="32" assertions="1" time="0.008979"/>
+      <testcase name="testRequestPathReturnsNullIfUnknown" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="38" assertions="1" time="0.001507"/>
+      <testcase name="testRequestPathReturnsProperValueFromRequestContext" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="43" assertions="1" time="0.002022"/>
+      <testcase name="testIsDevReturnsFalseByDefault" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="61" assertions="1" time="0.001492"/>
+      <testcase name="testIsDevReturnsTrueViaOptionalConstructorParam" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="67" assertions="1" time="0.001492"/>
+      <testcase name="testIsCliRequestReturnsTrueForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="73" assertions="1" time="0.001477"/>
+      <testcase name="testIsCgiRequestReturnsFalseForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="79" assertions="1" time="0.001507"/>
+      <testcase name="testIsCommandLineRequestReturnsFalseForAUnitTest" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="85" assertions="1" time="0.001542"/>
+      <testcase name="testCommandLineSendUsageError" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="91" assertions="1" time="0.002683"/>
+      <testcase name="testCommandLineSetsExpectedMethodAndPath" class="dapper\EnvTest" file="/Users/sam/Projects/dapper/testing/unit/EnvTest.php" line="105" assertions="2" time="0.002676"/>
     </testsuite>
-    <testsuite name="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" namespace="dapper" fullPackage="dapper" tests="18" assertions="19" failures="0" errors="0" time="0.050505">
-      <testcase name="testConstructNoExplosions" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="11" assertions="1" time="0.002113"/>
-      <testcase name="testEmptyInitClosureExtractsEmptyArray" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="18" assertions="1" time="0.002446"/>
-      <testcase name="testInitClosureWithScalarInScopeExtractedToArray" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="28" assertions="1" time="0.003833"/>
-      <testcase name="testInitClosureWithScalarVarTypeIsPreservedInExtraction" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="38" assertions="1" time="0.001823"/>
-      <testcase name="testInitClosureWithNonScalarExtraction" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="48" assertions="2" time="0.002130"/>
-      <testcase name="testEmptyInitClosureSentScopeVarsExtractionReturnsScopeVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="65" assertions="1" time="0.003317"/>
-      <testcase name="testInitClosureHasAccessToScopeVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="77" assertions="1" time="0.004996"/>
-      <testcase name="testProtectedScopeVarNamesDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="96" assertions="1" time="0.002329"/>
-      <testcase name="testNonValidScopeVarNamesDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="106" assertions="1" time="0.001875"/>
-      <testcase name="testNonValidScopeVarNameDigitsDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="116" assertions="1" time="0.001695"/>
-      <testcase name="testNewClosureCodeProperForMinimalClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="124" assertions="1" time="0.002302"/>
-      <testcase name="testNewClosureCodeProperForSingleAssignmentClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="131" assertions="1" time="0.002158"/>
-      <testcase name="testNewClosureCodeProperForSingleAssignmentWithPlusMarkClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="138" assertions="1" time="0.002096"/>
-      <testcase name="testExposedVarNmaesEmptyIfNoMarkedVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="145" assertions="1" time="0.002434"/>
-      <testcase name="testTransformExposesSingleMarkedAssignment" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="155" assertions="1" time="0.003235"/>
-      <testcase name="testTransformExposedForMultipleMarkedAssignments" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="165" assertions="1" time="0.004015"/>
-      <testcase name="testTransformProperlyParsesAdditionMarks" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="176" assertions="1" time="0.003122"/>
-      <testcase name="testTransformProperlyParsesAdditionMarksWithRegardsToSpacing" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="187" assertions="1" time="0.004586"/>
+    <testsuite name="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" namespace="dapper" fullPackage="dapper" tests="18" assertions="19" failures="0" errors="0" time="0.050180">
+      <testcase name="testConstructNoExplosions" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="11" assertions="1" time="0.002172"/>
+      <testcase name="testEmptyInitClosureExtractsEmptyArray" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="18" assertions="1" time="0.002665"/>
+      <testcase name="testInitClosureWithScalarInScopeExtractedToArray" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="28" assertions="1" time="0.003870"/>
+      <testcase name="testInitClosureWithScalarVarTypeIsPreservedInExtraction" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="38" assertions="1" time="0.001820"/>
+      <testcase name="testInitClosureWithNonScalarExtraction" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="48" assertions="2" time="0.002161"/>
+      <testcase name="testEmptyInitClosureSentScopeVarsExtractionReturnsScopeVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="65" assertions="1" time="0.003431"/>
+      <testcase name="testInitClosureHasAccessToScopeVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="77" assertions="1" time="0.004325"/>
+      <testcase name="testProtectedScopeVarNamesDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="96" assertions="1" time="0.002608"/>
+      <testcase name="testNonValidScopeVarNamesDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="106" assertions="1" time="0.001695"/>
+      <testcase name="testNonValidScopeVarNameDigitsDissalowed" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="116" assertions="1" time="0.001693"/>
+      <testcase name="testNewClosureCodeProperForMinimalClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="124" assertions="1" time="0.002102"/>
+      <testcase name="testNewClosureCodeProperForSingleAssignmentClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="131" assertions="1" time="0.002109"/>
+      <testcase name="testNewClosureCodeProperForSingleAssignmentWithPlusMarkClosure" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="138" assertions="1" time="0.002158"/>
+      <testcase name="testExposedVarNmaesEmptyIfNoMarkedVars" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="145" assertions="1" time="0.002358"/>
+      <testcase name="testTransformExposesSingleMarkedAssignment" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="155" assertions="1" time="0.003143"/>
+      <testcase name="testTransformExposedForMultipleMarkedAssignments" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="165" assertions="1" time="0.003875"/>
+      <testcase name="testTransformProperlyParsesAdditionMarks" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="176" assertions="1" time="0.003241"/>
+      <testcase name="testTransformProperlyParsesAdditionMarksWithRegardsToSpacing" class="dapper\ExtractingClosureTest" file="/Users/sam/Projects/dapper/testing/unit/ExtractingClosureTest.php" line="187" assertions="1" time="0.004754"/>
     </testsuite>
-    <testsuite name="dapper\TemplateEngine\TwigRenderTest" file="/Users/sam/Projects/dapper/testing/unit/Render/PhpTemplateTest.php" namespace="dapper\TemplateEngine" fullPackage="dapper.TemplateEngine" tests="1" assertions="1" failures="0" errors="0" time="0.002334">
-      <testcase name="testInstantiateNoErrors" class="dapper\TemplateEngine\TwigRenderTest" file="/Users/sam/Projects/dapper/testing/unit/Render/PhpTemplateTest.php" line="12" assertions="1" time="0.002334"/>
+    <testsuite name="dapper\TemplateEngine\TwigRenderTest" file="/Users/sam/Projects/dapper/testing/unit/Render/PhpTemplateTest.php" namespace="dapper\TemplateEngine" fullPackage="dapper.TemplateEngine" tests="1" assertions="1" failures="0" errors="0" time="0.002395">
+      <testcase name="testInstantiateNoErrors" class="dapper\TemplateEngine\TwigRenderTest" file="/Users/sam/Projects/dapper/testing/unit/Render/PhpTemplateTest.php" line="12" assertions="1" time="0.002395"/>
     </testsuite>
-    <testsuite name="dapper\TemplateEngine\TwigTemplateTest" file="/Users/sam/Projects/dapper/testing/unit/Render/TwigTemplateTest.php" namespace="dapper\TemplateEngine" fullPackage="dapper.TemplateEngine" tests="1" assertions="1" failures="0" errors="0" time="0.001897">
-      <testcase name="testInstantiateNoErrors" class="dapper\TemplateEngine\TwigTemplateTest" file="/Users/sam/Projects/dapper/testing/unit/Render/TwigTemplateTest.php" line="12" assertions="1" time="0.001897"/>
+    <testsuite name="dapper\TemplateEngine\TwigTemplateTest" file="/Users/sam/Projects/dapper/testing/unit/Render/TwigTemplateTest.php" namespace="dapper\TemplateEngine" fullPackage="dapper.TemplateEngine" tests="1" assertions="1" failures="0" errors="0" time="0.001915">
+      <testcase name="testInstantiateNoErrors" class="dapper\TemplateEngine\TwigTemplateTest" file="/Users/sam/Projects/dapper/testing/unit/Render/TwigTemplateTest.php" line="12" assertions="1" time="0.001915"/>
     </testsuite>
     <testsuite name="dapper\Responder\CliResponderTest" file="/Users/sam/Projects/dapper/testing/unit/Responder/CliResponderTest.php" namespace="dapper\Responder" fullPackage="dapper.Responder" tests="0" assertions="0" failures="0" errors="0" time="0.000000"/>
     <testsuite name="dapper\Responder\HttpResponderTest" file="/Users/sam/Projects/dapper/testing/unit/Responder/HttpResponderTest.php" namespace="dapper\Responder" fullPackage="dapper.Responder" tests="0" assertions="0" failures="0" errors="0" time="0.000000"/>
-    <testsuite name="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" namespace="dapper" fullPackage="dapper" tests="16" assertions="22" failures="0" errors="0" time="0.041728">
-      <testcase name="testProperPath" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="11" assertions="1" time="0.002744"/>
-      <testcase name="testPathCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="17" assertions="1" time="0.001941"/>
-      <testcase name="testInproperlySlashedPathIsCorrected" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="23" assertions="5" time="0.004684"/>
-      <testcase name="testProperHttpMethod" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="41" assertions="1" time="0.001924"/>
-      <testcase name="testProperHttpMethodCaseNormalized" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="47" assertions="1" time="0.001925"/>
-      <testcase name="testProperController" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="53" assertions="1" time="0.001960"/>
-      <testcase name="testProperControllerCaseNormalized" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="59" assertions="1" time="0.002238"/>
-      <testcase name="testProperUriPathSegments" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="65" assertions="1" time="0.003635"/>
-      <testcase name="testProperUriPathSegmentsCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="71" assertions="1" time="0.003463"/>
-      <testcase name="testSegemenstWithOutColonIgnored" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="77" assertions="1" time="0.002018"/>
-      <testcase name="testSegemenstWithIllegalCharsIgnored" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="83" assertions="2" time="0.003372"/>
-      <testcase name="testWork" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="92" assertions="2" time="0.003373"/>
-      <testcase name="testViewNameSetterGetter" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="101" assertions="1" time="0.001999"/>
-      <testcase name="testViewNameSetterGetterCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="108" assertions="1" time="0.002007"/>
-      <testcase name="testExtractPayloadReturnsEmptyArrayForRouteWithNoWork" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="115" assertions="1" time="0.001792"/>
-      <testcase name="testExtractPayloadReturnsEmptyArrayNoWorkExposedForRoute" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="121" assertions="1" time="0.002653"/>
+    <testsuite name="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" namespace="dapper" fullPackage="dapper" tests="16" assertions="22" failures="0" errors="0" time="0.041180">
+      <testcase name="testProperPath" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="11" assertions="1" time="0.002734"/>
+      <testcase name="testPathCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="17" assertions="1" time="0.001949"/>
+      <testcase name="testInproperlySlashedPathIsCorrected" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="23" assertions="5" time="0.004748"/>
+      <testcase name="testProperHttpMethod" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="41" assertions="1" time="0.001932"/>
+      <testcase name="testProperHttpMethodCaseNormalized" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="47" assertions="1" time="0.001904"/>
+      <testcase name="testProperController" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="53" assertions="1" time="0.001918"/>
+      <testcase name="testProperControllerCaseNormalized" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="59" assertions="1" time="0.001928"/>
+      <testcase name="testProperUriPathSegments" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="65" assertions="1" time="0.003538"/>
+      <testcase name="testProperUriPathSegmentsCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="71" assertions="1" time="0.003477"/>
+      <testcase name="testSegemenstWithOutColonIgnored" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="77" assertions="1" time="0.001836"/>
+      <testcase name="testSegemenstWithIllegalCharsIgnored" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="83" assertions="2" time="0.003311"/>
+      <testcase name="testWork" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="92" assertions="2" time="0.003294"/>
+      <testcase name="testViewNameSetterGetter" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="101" assertions="1" time="0.002012"/>
+      <testcase name="testViewNameSetterGetterCaseSensitive" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="108" assertions="1" time="0.002030"/>
+      <testcase name="testExtractPayloadReturnsEmptyArrayForRouteWithNoWork" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="115" assertions="1" time="0.001898"/>
+      <testcase name="testExtractPayloadReturnsEmptyArrayNoWorkExposedForRoute" class="dapper\RouteTest" file="/Users/sam/Projects/dapper/testing/unit/RouteTest.php" line="121" assertions="1" time="0.002672"/>
     </testsuite>
-    <testsuite name="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" namespace="dapper" fullPackage="dapper" tests="20" assertions="28" failures="0" errors="0" time="0.054320">
-      <testcase name="testAppendRouteThrowsProperExceptionForInvalidHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="27" assertions="1" time="0.001886"/>
-      <testcase name="testDo_workInvalidStateExceptionThrown" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="35" assertions="1" time="0.002304"/>
-      <testcase name="testDo_workArrivesOnLastRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="41" assertions="1" time="0.002073"/>
-      <testcase name="testBlindCallToRenderThrowsException" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="58" assertions="1" time="0.001825"/>
-      <testcase name="testEmptyCallToRenderThrowsException" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="67" assertions="1" time="0.001886"/>
-      <testcase name="testRenderViewLandsOnLastRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="74" assertions="1" time="0.002711"/>
-      <testcase name="testAppendRouteThrowExceptionForUnknowHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="88" assertions="1" time="0.001844"/>
-      <testcase name="testAppendRouteThrowExceptionForMissingPath" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="96" assertions="1" time="0.001786"/>
-      <testcase name="testAppendRouteThrowExceptionForMissingHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="104" assertions="1" time="0.001792"/>
-      <testcase name="testAppendRouteHttpMethodAndPathProperlyParsed" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="110" assertions="2" time="0.002964"/>
-      <testcase name="testAppendRoutePathSegemntsProperlyParsed" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="123" assertions="1" time="0.003703"/>
-      <testcase name="testRequestedRouteReturnsRouteFromCintructor" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="134" assertions="2" time="0.002591"/>
-      <testcase name="testLearnedRoutesReturnsAllLearnedRoutes" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="141" assertions="5" time="0.004746"/>
-      <testcase name="testMatchRouteReturnsNullForNoMatch" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="159" assertions="1" time="0.001949"/>
-      <testcase name="testMatchRouteReturnsTheCorrectRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="167" assertions="2" time="0.003148"/>
-      <testcase name="testMatchRouteExtraPathStillMatches" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="177" assertions="2" time="0.003227"/>
-      <testcase name="testRequestPathParamsReturnsEmptyArrayIfNoParamsSignified" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="187" assertions="1" time="0.002465"/>
-      <testcase name="testRequestSinglePathParamReturnsProperParams" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="200" assertions="1" time="0.003242"/>
-      <testcase name="testRequestMultiplePathParamsReturnsProperParams" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="213" assertions="1" time="0.004193"/>
-      <testcase name="testRequestMultiplePathParamsReturnsNullValueForParamsNotSuppliedInRequest" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="227" assertions="1" time="0.003984"/>
+    <testsuite name="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" namespace="dapper" fullPackage="dapper" tests="20" assertions="28" failures="0" errors="0" time="0.054485">
+      <testcase name="testAppendRouteThrowsProperExceptionForInvalidHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="27" assertions="1" time="0.001913"/>
+      <testcase name="testDo_workInvalidStateExceptionThrown" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="35" assertions="1" time="0.002435"/>
+      <testcase name="testDo_workArrivesOnLastRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="41" assertions="1" time="0.002122"/>
+      <testcase name="testBlindCallToRenderThrowsException" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="58" assertions="1" time="0.001846"/>
+      <testcase name="testEmptyCallToRenderThrowsException" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="67" assertions="1" time="0.002046"/>
+      <testcase name="testRenderViewLandsOnLastRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="74" assertions="1" time="0.002514"/>
+      <testcase name="testAppendRouteThrowExceptionForUnknowHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="88" assertions="1" time="0.001830"/>
+      <testcase name="testAppendRouteThrowExceptionForMissingPath" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="96" assertions="1" time="0.001736"/>
+      <testcase name="testAppendRouteThrowExceptionForMissingHttpMethod" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="104" assertions="1" time="0.001880"/>
+      <testcase name="testAppendRouteHttpMethodAndPathProperlyParsed" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="110" assertions="2" time="0.002791"/>
+      <testcase name="testAppendRoutePathSegemntsProperlyParsed" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="123" assertions="1" time="0.003764"/>
+      <testcase name="testRequestedRouteReturnsRouteFromCintructor" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="134" assertions="2" time="0.002634"/>
+      <testcase name="testLearnedRoutesReturnsAllLearnedRoutes" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="141" assertions="5" time="0.004599"/>
+      <testcase name="testMatchRouteReturnsNullForNoMatch" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="159" assertions="1" time="0.001965"/>
+      <testcase name="testMatchRouteReturnsTheCorrectRoute" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="167" assertions="2" time="0.003170"/>
+      <testcase name="testMatchRouteExtraPathStillMatches" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="177" assertions="2" time="0.003230"/>
+      <testcase name="testRequestPathParamsReturnsEmptyArrayIfNoParamsSignified" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="187" assertions="1" time="0.002493"/>
+      <testcase name="testRequestSinglePathParamReturnsProperParams" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="200" assertions="1" time="0.003320"/>
+      <testcase name="testRequestMultiplePathParamsReturnsProperParams" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="213" assertions="1" time="0.004100"/>
+      <testcase name="testRequestMultiplePathParamsReturnsNullValueForParamsNotSuppliedInRequest" class="dapper\RouterTest" file="/Users/sam/Projects/dapper/testing/unit/RouterTest.php" line="227" assertions="1" time="0.004097"/>
     </testsuite>
-    <testsuite name="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" namespace="dapper" fullPackage="dapper" tests="3" assertions="3" failures="0" errors="0" time="0.004666">
-      <testcase name="testInstantiateNoErrors" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="7" assertions="1" time="0.001362"/>
-      <testcase name="testClosureMethodReturnsClosureFromConstructor" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="14" assertions="1" time="0.001288"/>
-      <testcase name="testInvokingWorkOnlyExposesPlusedVars" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="23" assertions="1" time="0.002016"/>
+    <testsuite name="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" namespace="dapper" fullPackage="dapper" tests="3" assertions="3" failures="0" errors="0" time="0.005150">
+      <testcase name="testInstantiateNoErrors" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="7" assertions="1" time="0.001707"/>
+      <testcase name="testClosureMethodReturnsClosureFromConstructor" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="14" assertions="1" time="0.001396"/>
+      <testcase name="testInvokingWorkOnlyExposesPlusedVars" class="dapper\WorkTest" file="/Users/sam/Projects/dapper/testing/unit/WorkTest.php" line="23" assertions="1" time="0.002047"/>
     </testsuite>
   </testsuite>
 </testsuites>
